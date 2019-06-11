@@ -44,23 +44,15 @@ class CurrentTemperatureFragment : BaseFragment() {
 
             val t = temperature ?: last
 
-            it.mintemp?.toFloat()?.let {
-                logv("temperature mintemp=$it")
-                thermometer.minScaleValue = it
-            }
-            it.maxtemp?.toFloat()?.let {
-                logv("temperature maxtemp=$it")
-                thermometer.maxScaleValue = it
-            }
+            val temperatures = it.templist?.value?.map { it.wert?.toFloat() }?.filterNotNull()
+            val min = temperatures?.min() ?: 0f
+            val max = temperatures?.max() ?: 0f
 
-            thermometer.initConfig()
-            thermometer.setCurValue(25f)
+            thermometer.minScaleValue = min
+            thermometer.maxScaleValue = max
+            logv("temperature=$temperature last=$last => $t min=$min max$max")
 
-            logv("temperature=$temperature last=$last => $t")
-
-            thermometer.post {
-                thermometer.setValueAndStartAnim(t)
-            }
+            thermometer.setValueAndStartAnim(t)
         }
 
         thermometer.curScaleValue = 25f

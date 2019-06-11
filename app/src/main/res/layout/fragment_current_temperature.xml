@@ -9,6 +9,8 @@
     <net.kibotu.schlachtensee.ui.temperature.ThermometerView
         android:id="@+id/thermometer"
         android:layout_width="0dp"
+        app:minScaleValue="10"
+        app:maxScaleValue="35"
         android:layout_height="400dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
