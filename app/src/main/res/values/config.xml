@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- debug menu -->
+
+    <bool name="enable_debug_menu">false</bool>
+    <bool name="enable_logging">false</bool>
+    <bool name="enableSecureScreen">true</bool>
+    <bool name="flag_keep_screen_on">false</bool>
+    <bool name="dangerously_trusting_all_hosts">false</bool>
+    <bool name="enableLeakCanary">false</bool>
+
+    <!--  push -->
+
+    <string name="gcm_base_url">https://gcm-http.googleapis.com</string>
+    <string name="fcm_base_url">https://fcm.googleapis.com</string>
+
+    <integer name="timeoutDurationInSeconds">60</integer>
+
+    <!-- splash screen -->
+
+    <integer name="splash_duration">250</integer>
+
+    <!-- animation durations -->
+
+    <integer name="slide_animation_duration">250</integer>
+    <integer name="flip_animation_duration">750</integer>
+
+    <integer name="anim_duration_zero">0</integer>
+
+</resources>

@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">Schlachtensee</string>
+    <string name="no_internet_connection_available">No Internet Available</string>
+    <string name="tab_1">Temperature</string>
+    <string name="tab_2">Graph</string>
+    <string name="tab_3">Map</string>
 </resources>

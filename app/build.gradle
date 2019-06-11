@@ -1,7 +1,12 @@
 ext {
     VERSION_NAME = simpleReleaseVersionName()
     VERSION_CODE = commitCount()
+    CANONICAL_VERSION_NAME = canonicalReleaseVersionName()
+    BRANCH_NAME = branchName()
+    COMMIT_HASH = commitHash()
     isLocal = project.rootProject.file('local.properties').exists()
+    isTesting = false
+    BUILD_TIME = new Date().getTime()
 }
 
 apply plugin: 'com.android.application'
@@ -34,8 +39,19 @@ android {
         versionName VERSION_NAME
         vectorDrawables.useSupportLibrary = true
 
-        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
-        testInstrumentationRunnerArguments clearPackageData: 'true'
+        buildConfigField "String", "CANONICAL_VERSION_NAME", escape(CANONICAL_VERSION_NAME)
+        buildConfigField "String", "COMMIT_HASH", escape(COMMIT_HASH)
+        buildConfigField "String", "BRANCH", escape(BRANCH_NAME)
+        buildConfigField "String", "BUILD_DATE", escape(BUILD_TIME)
+        buildConfigField "String", "VSC", escape(VSC_PATH)
+        buildConfigField "boolean", "IS_LOCAL", escape(isLocal)
+        buildConfigField "boolean", "IS_CI", escape(isCi)
+        buildConfigField "boolean", "TESTING", escape(isTesting)
+
+        resConfigs "de"
+        manifestPlaceholders += [
+                crashlyticsEnabled: false
+        ]
     }
 
     compileOptions {
@@ -113,13 +129,27 @@ android {
 }
 
 dependencies {
-    implementation libs.kotlinJdk8
+
+    debugImplementation libs.leakcanaryDebug
+    debugImplementation libs.leakcanaryDebugSupportFragments
+    releaseImplementation libs.leakcanaryRelease
+
+
     implementation libs.supportMultidex
+
+    implementation libs.kotlinJdk8
+    implementation libs.kotlinxCoroutinesCore
+    implementation libs.kotlinxCoroutinesAndroid
+
+    implementation libs.androidKtx
     implementation libs.supportAppCompat
     implementation libs.appCompatResources
+    implementation libs.androidKtxFragment
     implementation libs.supportDesign
-    implementation libs.constraintLayout
-    implementation libs.androidKtx
+    implementation libs.constraintLayout2
+    implementation libs.supportRecyclerview
+    implementation libs.supportAnnotations
+    implementation libs.supportVectorDrawable
 
     // viewmodel and lifecycle
     implementation libs.lifecycleExtensions
@@ -131,27 +161,183 @@ dependencies {
     implementation libs.lifecycleLivedataKtx
     implementation libs.androidKtxLifecycleViewmodel
 
+    implementation libs.koinAndroidxScope
+    implementation libs.koinAndroidxViewmodel
+
+    implementation libs.activityKtx
+    implementation libs.androidKtxCollection
+
+    implementation libs.androidKtxNavigationCommon
+    implementation libs.androidKtxNavigationFragment
+    implementation libs.androidKtxNavigationUi
+    implementation libs.androidKtxNavigationRuntime
+
+    implementation libs.playServicesAuth
+    implementation libs.firebaseCore
+    implementation libs.firebaseCrash
+    implementation(libs.crashlytics) { transitive = true }
+    implementation libs.firebaseMessaging
+    implementation libs.playServicesLocation
+    implementation libs.playServicesMaps
+    implementation libs.playServicesMapsUtils
+
     // pagination
     implementation libs.pagingRuntimeKtx
 
     implementation libs.gson
+
     implementation libs.rx2java
     implementation libs.rx2Android
+    implementation libs.rx2Kotlin
+    implementation libs.retrofit
+    implementation libs.retrofitCoroutineAdapter
+    implementation libs.retrofitConverterGson
+    implementation libs.okhttp3
+    implementation libs.okhttp3LoggingInterceptor
+    implementation libs.okhttp3ResponseEcho
+
+    implementation libs.secureStorage
+    implementation libs.rxpermissions
 
     implementation libs.exozetCore
     implementation libs.logger
+    implementation libs.deviceInfo
     implementation libs.recyclerViewPresenter4
     implementation libs.recyclerviewAnimators
+    implementation libs.processPhoenix
+
+    implementation libs.catLoading
+
+    implementation libs.glide
+    kapt libs.glideAnnotationsProcessor
+
+    implementation 'com.github.biansemao:ThermometerView:1.0.1'
 }
 
 // region override support library version
 
 configurations.all {
+
     resolutionStrategy.cacheDynamicVersionsFor 10, 'minutes'
-    resolutionStrategy.force libs.kotlinJdk8
+
+    resolutionStrategy.force libs.koinAndroidxScope
+    resolutionStrategy.force libs.koinAndroidxViewmodel
+
+    resolutionStrategy.force libs.supportMediaCompat
+    resolutionStrategy.force libs.supportFragment
+    resolutionStrategy.force libs.fragmentKtx
+    resolutionStrategy.force libs.supportActivity
+    resolutionStrategy.force libs.activityKtx
     resolutionStrategy.force libs.supportAppCompat
     resolutionStrategy.force libs.appCompatResources
-    resolutionStrategy.force libs.constraintLayout
+    resolutionStrategy.force libs.supportCardView
+    resolutionStrategy.force libs.supportGridLayout
+    resolutionStrategy.force libs.supportMediaRouter
+    resolutionStrategy.force libs.supportPalette
+    resolutionStrategy.force libs.supportRecyclerview
+    resolutionStrategy.force libs.supportPreferenceV7
+    resolutionStrategy.force libs.supportPreferenceV14
+    resolutionStrategy.force libs.supportV13
+    resolutionStrategy.force libs.supportV4
+    resolutionStrategy.force libs.supportPreferenceLeanback
+    resolutionStrategy.force libs.supportLeanback
+    resolutionStrategy.force libs.supportVectorDrawable
+    resolutionStrategy.force libs.supportAnimatedVectorDrawable
+    resolutionStrategy.force libs.supportAnnotations
+    resolutionStrategy.force libs.supportDesign
+    resolutionStrategy.force libs.supportCustomTabs
+    resolutionStrategy.force libs.supportPercent
+    resolutionStrategy.force libs.supportExifInterface
+    resolutionStrategy.force libs.supportRecommendation
+    resolutionStrategy.force libs.supportWear
+    resolutionStrategy.force libs.constraintLayout2
+    resolutionStrategy.force libs.supportCoreUtils
+    resolutionStrategy.force libs.supportCoreUi
+    resolutionStrategy.force libs.supportDynamicAnimation
+
+    resolutionStrategy.force libs.lifecycleExtensions
+    resolutionStrategy.force libs.lifecycleViewmodel
+    resolutionStrategy.force libs.lifecycleLivedata
+    resolutionStrategy.force libs.lifecycleLivedataCore
+    resolutionStrategy.force libs.lifecycleCompiler
+    resolutionStrategy.force libs.lifecycleRuntime
+
+    resolutionStrategy.force libs.playServicesPlus
+    resolutionStrategy.force libs.playServicesAuth
+    resolutionStrategy.force libs.playServicesBase
+    resolutionStrategy.force libs.playServicesIdentity
+    resolutionStrategy.force libs.playServicesAnalytics
+    resolutionStrategy.force libs.playServicesAwareness
+    resolutionStrategy.force libs.playServicesCast
+    resolutionStrategy.force libs.playServicesGcm
+    resolutionStrategy.force libs.playServicesDrive
+    resolutionStrategy.force libs.playServicesFitness
+    resolutionStrategy.force libs.playServicesLocation
+    resolutionStrategy.force libs.playServicesMaps
+    resolutionStrategy.force libs.playServicesAds
+    resolutionStrategy.force libs.playServicesPlaces
+    resolutionStrategy.force libs.playServicesVision
+    resolutionStrategy.force libs.playServicesNearby
+    resolutionStrategy.force libs.playServicesPanorama
+    resolutionStrategy.force libs.playServicesGames
+    resolutionStrategy.force libs.playServicesSafetynet
+    resolutionStrategy.force libs.playServicesWallet
+    resolutionStrategy.force libs.playServicesWearable
+
+    resolutionStrategy.force libs.firebaseIid
+    resolutionStrategy.force libs.firebaseCommon
+    resolutionStrategy.force libs.firebaseCore
+    resolutionStrategy.force libs.firebaseDatabase
+    resolutionStrategy.force libs.firebaseFirestore
+    resolutionStrategy.force libs.firebaseStorage
+    resolutionStrategy.force libs.firebaseCrash
+    resolutionStrategy.force libs.firebaseAuth
+    resolutionStrategy.force libs.firebaseMessaging
+    resolutionStrategy.force libs.firebaseConfig
+    resolutionStrategy.force libs.firebaseInvites
+    resolutionStrategy.force libs.firebaseAds
+    resolutionStrategy.force libs.firebaseAppindexing
+    resolutionStrategy.force libs.firebasePerf
+//    resolutionStrategy.force libs.firebaseFunctions
+    resolutionStrategy.force libs.firebaseMlVision
+    resolutionStrategy.force libs.firebaseMlModelInterpreter
+
+    resolutionStrategy.force libs.autoValueAnnotations
+
+    resolutionStrategy.force libs.androidKtx
+    resolutionStrategy.force libs.androidKtxFragment
+    resolutionStrategy.force libs.androidKtxCollection
+    resolutionStrategy.force libs.androidKtxLifecycleViewmodel
+    resolutionStrategy.force libs.androidKtxLifecycleReactiveStreams
+    resolutionStrategy.force libs.lifecycleLivedataKtx
+    resolutionStrategy.force libs.androidKtxNavigationCommon
+    resolutionStrategy.force libs.androidKtxNavigationFragment
+    resolutionStrategy.force libs.androidKtxNavigationUi
+    resolutionStrategy.force libs.androidKtxNavigationRuntime
 }
 
 // endregion
+
+static def escape(Object value) {
+    return "\"$value\""
+}
+
+static def escape(boolean value) {
+    return "$value"
+}
+
+task copyReadme(type: Copy) {
+    from "${project.rootDir}/README.md"
+    into "${project.rootDir}/app/src/main/assets"
+}
+
+task('generateChangelogTask') {
+    doLast {
+        generateChangelog()
+    }
+}
+
+preBuild.dependsOn generateChangelogTask
+preBuild.dependsOn copyReadme
+
+//apply plugin: 'com.google.gms.google-services'
