@@ -34,7 +34,7 @@ class CurrentTemperatureFragment : BaseFragment() {
         val formatter = SimpleDateFormat(format, Locale.GERMANY)
 
         schlachtenseeApiViewModel.temperatures.observe(this) {
-            logv("temperatures ${it.toJson()}")
+            logv("temperature ${it.toJson()}")
 
             val now = formatter.format(Date())
 
@@ -44,8 +44,26 @@ class CurrentTemperatureFragment : BaseFragment() {
 
             val t = temperature ?: last
 
-            thermometer.setValueAndStartAnim(t)
+            it.mintemp?.toFloat()?.let {
+                logv("temperature mintemp=$it")
+                thermometer.minScaleValue = it
+            }
+            it.maxtemp?.toFloat()?.let {
+                logv("temperature maxtemp=$it")
+                thermometer.maxScaleValue = it
+            }
+
+            thermometer.initConfig()
+            thermometer.setCurValue(25f)
+
+            logv("temperature=$temperature last=$last => $t")
+
+            thermometer.post {
+                thermometer.setValueAndStartAnim(t)
+            }
         }
+
+        thermometer.curScaleValue = 25f
 
         thermometer.onClick {
             thermometer.setValueAndStartAnim(Random.nextFloat() * 7 + 35)

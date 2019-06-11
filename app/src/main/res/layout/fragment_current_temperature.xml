@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:layout_margin="@dimen/activity_horizontal_margin">
 
-    <com.biansemao.widget.ThermometerView
+    <net.kibotu.schlachtensee.ui.temperature.ThermometerView
         android:id="@+id/thermometer"
         android:layout_width="0dp"
         android:layout_height="400dp"

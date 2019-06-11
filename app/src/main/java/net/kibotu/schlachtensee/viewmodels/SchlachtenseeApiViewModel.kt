@@ -41,7 +41,7 @@ class SchlachtenseeApiViewModel : ViewModel() {
                 requestProvider.schlachtenseeApi.yearlyTemperature()
             }
 
-            temperatures.postValue(result)
+            temperatures.value = result
         }
 
     }

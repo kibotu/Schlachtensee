@@ -210,8 +210,6 @@ dependencies {
 
     implementation libs.glide
     kapt libs.glideAnnotationsProcessor
-
-    implementation 'com.github.biansemao:ThermometerView:1.0.1'
 }
 
 // region override support library version
