@@ -2,7 +2,6 @@ package net.kibotu.schlachtensee.viewmodels
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.exozet.android.core.extensions.inject
 import com.exozet.android.core.extensions.resString
 import com.exozet.android.core.models.LoadingInfo
 import com.exozet.android.core.services.connectivity.NetworkChangeReceiver
@@ -16,8 +15,6 @@ import net.kibotu.logger.Logger.loge
 import net.kibotu.logger.Logger.logv
 import net.kibotu.logger.snack
 import net.kibotu.schlachtensee.R
-import net.kibotu.schlachtensee.models.Templist
-import net.kibotu.schlachtensee.services.network.RequestProvider
 import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
 

@@ -11,6 +11,6 @@
 
     <!-- splash screen -->
 
-    <integer name="splash_duration">750</integer>
+    <integer name="splash_duration">0</integer>
 
 </resources>

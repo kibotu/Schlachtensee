@@ -39,7 +39,7 @@ private fun createOkHttpClient(
 private inline fun <reified T> createWebService(okHttpClient: OkHttpClient, url: String): T = Retrofit.Builder()
     .baseUrl(url)
     .client(okHttpClient)
-    .addConverterFactory(GsonConverterFactory.create())
     .addConverterFactory(SimpleXmlConverterFactory.create())
+    .addConverterFactory(GsonConverterFactory.create())
     .build()
     .create(T::class.java)

@@ -1,6 +1,6 @@
 package net.kibotu.schlachtensee.services.network
 
-import net.kibotu.schlachtensee.models.Temphist
+import net.kibotu.schlachtensee.models.TemperatureHistory
 import retrofit2.http.GET
 
 /**
@@ -12,11 +12,11 @@ import retrofit2.http.GET
 interface SchlachtenseeApi {
 
     @GET("/jmn_ajax.php?anfrage=7&art=temperaturtag&offset=0")
-    suspend fun dailyTemperature(): Temphist
+    suspend fun dailyTemperature(): TemperatureHistory
 
     @GET("/jmn_ajax.php?anfrage=7&art=temperaturwoche&offset=0")
-    suspend fun weeklyTemperature(): Temphist
+    suspend fun weeklyTemperature(): TemperatureHistory
 
     @GET("/jmn_ajax.php?anfrage=7&art=temperaturjahr&offset=0")
-    suspend fun yearlyTemperature(): Temphist
+    suspend fun yearlyTemperature(): TemperatureHistory
 }

@@ -4,7 +4,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.exozet.android.core.extensions.inject
 import kotlinx.coroutines.*
-import net.kibotu.schlachtensee.models.Temphist
+import net.kibotu.schlachtensee.models.TemperatureHistory
 import net.kibotu.schlachtensee.services.network.RequestProvider
 
 /**
@@ -31,7 +31,7 @@ class SchlachtenseeApiViewModel : ViewModel() {
 
     val requestProvider by inject<RequestProvider>()
 
-    val temperatures = MutableLiveData<Temphist>()
+    val temperatures = MutableLiveData<TemperatureHistory>()
 
     fun loadYearly() {
 
