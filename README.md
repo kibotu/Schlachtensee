@@ -1,0 +1,1 @@
+[![Build Status](https://travis-ci.org/kibotu/Schlachtensee.svg)](https://travis-ci.org/kibotu/Schlachtensee)
