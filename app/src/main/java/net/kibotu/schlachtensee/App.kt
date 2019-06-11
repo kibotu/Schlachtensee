@@ -5,13 +5,8 @@ import androidx.multidex.MultiDexApplication
 import com.exozet.android.core.extensions.installServiceProviderIfNeeded
 import com.exozet.android.core.extensions.resBoolean
 import net.kibotu.logger.Logger
-import net.kibotu.schlachtensee.extensions.initCrashlytics
 import net.kibotu.schlachtensee.extensions.initLogger
-import net.kibotu.schlachtensee.extensions.subscribePushNotificationTopics
-import net.kibotu.schlachtensee.koin.configuration
-import net.kibotu.schlachtensee.koin.navigationModule
-import net.kibotu.schlachtensee.koin.uiModule
-import net.kibotu.schlachtensee.koin.viewModelModule
+import net.kibotu.schlachtensee.koin.*
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.logger.AndroidLogger
 import org.koin.core.context.startKoin
@@ -30,8 +25,8 @@ class App : MultiDexApplication() {
 
         initLogger()
 
-        initCrashlytics()
-        subscribePushNotificationTopics()
+//        initCrashlytics()
+//        subscribePushNotificationTopics()
         installServiceProviderIfNeeded()
     }
 
@@ -46,7 +41,8 @@ class App : MultiDexApplication() {
                 configuration,
                 uiModule,
                 viewModelModule,
-                navigationModule
+                navigationModule,
+                remoteDataSourceModule
             )
         }
     }

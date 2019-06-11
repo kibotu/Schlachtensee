@@ -34,8 +34,8 @@ fun Application.initCrashlytics() {
     Fabric.with(this, Crashlytics())
 
     Crashlytics.setString("version", BuildConfig.CANONICAL_VERSION_NAME)
-    Crashlytics.setString("git-files", "${BuildConfig.VSC}${VSC.Gitlab.filesUrl}/${BuildConfig.COMMIT_HASH}")
-    Crashlytics.setString("git-commit", "${BuildConfig.VSC}${VSC.Gitlab.commitUrl}/${BuildConfig.COMMIT_HASH}")
+    Crashlytics.setString("git-files", "${BuildConfig.VSC}${VSC.Github.filesUrl}/${BuildConfig.COMMIT_HASH}")
+    Crashlytics.setString("git-commit", "${BuildConfig.VSC}${VSC.Github.commitUrl}/${BuildConfig.COMMIT_HASH}")
 }
 
 fun Application.subscribePushNotificationTopics() {
@@ -54,7 +54,7 @@ fun Application.initLogger() {
         Logger.addLogger(WebLogger())
     }
 
-    Logger.addLogger(CrashlyticsLogger(), Level.VERBOSE)
+//    Logger.addLogger(CrashlyticsLogger(), Level.VERBOSE)
 }
 
 fun Application.initLeakCanary(): Boolean {

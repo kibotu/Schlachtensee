@@ -190,8 +190,8 @@ dependencies {
     implementation libs.rx2Android
     implementation libs.rx2Kotlin
     implementation libs.retrofit
-    implementation libs.retrofitCoroutineAdapter
     implementation libs.retrofitConverterGson
+    implementation libs.converterSimpleXml
     implementation libs.okhttp3
     implementation libs.okhttp3LoggingInterceptor
     implementation libs.okhttp3ResponseEcho
