@@ -22,6 +22,10 @@ class CurrentTemperatureFragment : BaseFragment() {
 
     override val layout = R.layout.fragment_current_temperature
 
+    override val hasLightStatusBar = true
+
+    override val isFullScreen = true
+
     val schlachtenseeApiViewModel by inject<SchlachtenseeApiViewModel>()
 
     override fun subscribeUi() {
