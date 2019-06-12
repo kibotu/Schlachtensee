@@ -53,7 +53,7 @@ class CurrentTemperatureFragment : BaseFragment() {
             val max = temperatures?.max() ?: 0f
 
             thermometer.minScaleValue = min
-            thermometer.maxScaleValue = max
+            thermometer.maxScaleValue = max + 5
             logv("temperature=$temperature last=$last => $t min=$min max$max")
 
             thermometer.setValueAndStartAnim(t)
@@ -62,7 +62,7 @@ class CurrentTemperatureFragment : BaseFragment() {
         thermometer.curScaleValue = 25f
 
         thermometer.onClick {
-            thermometer.setValueAndStartAnim(Random.nextFloat() * 7 + 35)
+            // thermometer.setValueAndStartAnim(Random.nextFloat() * thermometer.maxScaleValue)
         }
     }
 
