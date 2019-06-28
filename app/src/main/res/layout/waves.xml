@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:parallax_scrolling_view="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <net.kibotu.schlachtensee.ui.custom.ParallaxScrollingView
+        android:id="@+id/wave1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:minHeight="?android:attr/actionBarSize"
+        parallax_scrolling_view:speed="@dimen/wave1_speed"
+        parallax_scrolling_view:src="@drawable/wave1" />
+
+    <net.kibotu.schlachtensee.ui.custom.ParallaxScrollingView
+        android:id="@+id/wave2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="30dp"
+        android:minHeight="?android:attr/actionBarSize"
+        parallax_scrolling_view:speed="@dimen/wave2_speed"
+        parallax_scrolling_view:src="@drawable/wave2" />
+
+    <net.kibotu.schlachtensee.ui.custom.ParallaxScrollingView
+        android:id="@+id/wave3"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="50dp"
+        android:minHeight="?android:attr/actionBarSize"
+        parallax_scrolling_view:speed="@dimen/wave3_speed"
+        parallax_scrolling_view:src="@drawable/wave3" />
+</RelativeLayout>

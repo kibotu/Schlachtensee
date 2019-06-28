@@ -3,19 +3,14 @@ package net.kibotu.schlachtensee.ui.temperature;
 import android.animation.ObjectAnimator;
 import android.content.Context;
 import android.content.res.TypedArray;
-import android.graphics.Bitmap;
-import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Paint;
-import android.graphics.PorterDuff;
-import android.graphics.PorterDuffXfermode;
-import android.graphics.RectF;
+import android.graphics.*;
 import android.text.Layout;
 import android.text.TextPaint;
 import android.util.AttributeSet;
 import android.view.View;
-import android.view.animation.LinearInterpolator;
+import android.view.animation.AccelerateDecelerateInterpolator;
 import androidx.annotation.Nullable;
+import net.kibotu.logger.Logger;
 import net.kibotu.schlachtensee.R;
 
 /**
@@ -205,45 +200,49 @@ public class ThermometerView extends View {
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
         super.onSizeChanged(w, h, oldw, oldh);
 
+        createBitmap();
+    }
+
+    private void createBitmap() {
         mWidth = this.getWidth();
         int mHeight = this.getHeight();
         mPaddingTop = getPaddingTop();
         float mPaddingBottom = getPaddingBottom();
 
-        leftTitleX = mWidth / 2 - spaceScaleWidth - minThermometerRadius - maxLineWidth / 2 - textWidth / 2;
-        rightTitleX = mWidth / 2 + spaceScaleWidth + minThermometerRadius + maxLineWidth / 2 - textWidth / 2;
+        leftTitleX = mWidth / 2f - spaceScaleWidth - minThermometerRadius - maxLineWidth / 2 - textWidth / 2;
+        rightTitleX = mWidth / 2f + spaceScaleWidth + minThermometerRadius + maxLineWidth / 2 - textWidth / 2;
         titleY = mPaddingTop + titleHeight;
 
         float mercuryHeight = mHeight - titleHeight - mPaddingTop - mPaddingBottom - minThermometerRadius - 2 * maxThermometerRadius;
 
         scaleSpaceHeight = mercuryHeight / sumScaleValue;
 
-        thermometerTopX = thermometerBottomX = mWidth / 2;
+        thermometerTopX = thermometerBottomX = mWidth / 2f;
         thermometerTopY = mPaddingTop + titleHeight + minThermometerRadius;
         thermometerBottomY = mHeight - mPaddingBottom - maxThermometerRadius;
 
         thermometerRectF = new RectF();
-        thermometerRectF.left = mWidth / 2 - minThermometerRadius;
+        thermometerRectF.left = mWidth / 2f - minThermometerRadius;
         thermometerRectF.top = mPaddingTop + titleHeight + minThermometerRadius;
-        thermometerRectF.right = mWidth / 2 + minThermometerRadius;
+        thermometerRectF.right = mWidth / 2f + minThermometerRadius;
         thermometerRectF.bottom = mHeight - mPaddingBottom - maxThermometerRadius;
 
         mercuryRectF = new RectF();
-        mercuryRectF.left = mWidth / 2 - minMercuryRadius;
+        mercuryRectF.left = mWidth / 2f - minMercuryRadius;
         mercuryRectF.top = mPaddingTop + titleHeight + minThermometerRadius;
-        mercuryRectF.right = mWidth / 2 + minMercuryRadius;
+        mercuryRectF.right = mWidth / 2f + minMercuryRadius;
         mercuryRectF.bottom = mPaddingTop + titleHeight + minThermometerRadius + 2 * minMercuryRadius;
 
-        leftMercuryLeft = mWidth / 2 - minMercuryRadius;
-        leftMercuryRight = rightMercuryLeft = mWidth / 2;
-        rightMercuryRight = mWidth / 2 + minMercuryRadius;
+        leftMercuryLeft = mWidth / 2f - minMercuryRadius;
+        leftMercuryRight = rightMercuryLeft = mWidth / 2f;
+        rightMercuryRight = mWidth / 2f + minMercuryRadius;
 
         mercuryTop = mPaddingTop + titleHeight + minThermometerRadius + minMercuryRadius;
         mercuryBottom = mHeight - mPaddingBottom - maxThermometerRadius;
 
-        leftWaveLeft = mWidth / 2 - maxMercuryRadius;
+        leftWaveLeft = mWidth / 2f - maxMercuryRadius;
         leftWaveRight = rightWaveLeft = mWidth / 2;
-        rightWaveRight = mWidth / 2 + maxMercuryRadius;
+        rightWaveRight = mWidth / 2f + maxMercuryRadius;
 
         waveBottom = mHeight - mPaddingBottom - (maxThermometerRadius - maxMercuryRadius);
 
@@ -269,6 +268,8 @@ public class ThermometerView extends View {
         drawWaveShape(mPaint, bitmapCanvas);
 
         canvas.drawBitmap(bitmap, 0, 0, mPaint);
+
+//        Logger.v("Thermometer", "onDraw");
     }
 
     /**
@@ -298,27 +299,27 @@ public class ThermometerView extends View {
                 Paint.FontMetricsInt fmi = mTextPaint.getFontMetricsInt();
                 float baselineY = -(float) (fmi.bottom + fmi.top);
                 canvas.drawText(curValueStr,
-                        mWidth / 2 - minThermometerRadius - 2 * spaceScaleWidth - maxLineWidth - textWidth,
+                        mWidth / 2f - minThermometerRadius - 2 * spaceScaleWidth - maxLineWidth - textWidth,
                         mPaddingTop + titleHeight + minThermometerRadius + scaleSpaceHeight * i + baselineY / 2, mTextPaint);
 
                 mLinePaint.setColor(maxScaleLineColor);
-                canvas.drawLine(mWidth / 2 - spaceScaleWidth - minThermometerRadius - maxLineWidth,
+                canvas.drawLine(mWidth / 2f - spaceScaleWidth - minThermometerRadius - maxLineWidth,
                         mPaddingTop + titleHeight + minThermometerRadius + scaleSpaceHeight * i,
-                        mWidth / 2 - spaceScaleWidth - minThermometerRadius,
+                        mWidth / 2f - spaceScaleWidth - minThermometerRadius,
                         mPaddingTop + titleHeight + minThermometerRadius + scaleSpaceHeight * i, mLinePaint);
             } else if (i % 5 == 0) {
                 mLinePaint.setColor(midScaleLineColor);
 
-                canvas.drawLine(mWidth / 2 - spaceScaleWidth - minThermometerRadius - midLineWidth,
+                canvas.drawLine(mWidth / 2f - spaceScaleWidth - minThermometerRadius - midLineWidth,
                         mPaddingTop + titleHeight + minThermometerRadius + scaleSpaceHeight * i,
-                        mWidth / 2 - spaceScaleWidth - minThermometerRadius,
+                        mWidth / 2f - spaceScaleWidth - minThermometerRadius,
                         mPaddingTop + titleHeight + minThermometerRadius + scaleSpaceHeight * i, mLinePaint);
             } else {
                 mLinePaint.setColor(minScaleLineColor);
 
-                canvas.drawLine(mWidth / 2 - spaceScaleWidth - minThermometerRadius - minLineWidth,
+                canvas.drawLine(mWidth / 2f - spaceScaleWidth - minThermometerRadius - minLineWidth,
                         mPaddingTop + titleHeight + minThermometerRadius + scaleSpaceHeight * i,
-                        mWidth / 2 - spaceScaleWidth - minThermometerRadius,
+                        mWidth / 2f - spaceScaleWidth - minThermometerRadius,
                         mPaddingTop + titleHeight + minThermometerRadius + scaleSpaceHeight * i, mLinePaint);
             }
         }
@@ -326,7 +327,7 @@ public class ThermometerView extends View {
         /* 绘制右边刻度及文字 */
         for (int i = 0; i <= sumScaleValue; i++) {
             if (i % 10 == 0) {
-                float curValue = maxScaleValue - i / 10;
+                float curValue = maxScaleValue - i / 10f;
                 String curValueStr = String.format("%.0f", curValue);
 
                 mTextPaint.setColor(scaleTextColor);
@@ -334,28 +335,28 @@ public class ThermometerView extends View {
                 Paint.FontMetricsInt fmi = mTextPaint.getFontMetricsInt();
                 float baselineY = -(float) (fmi.bottom + fmi.top);
                 canvas.drawText(curValueStr,
-                        mWidth / 2 + minThermometerRadius + 2 * spaceScaleWidth + maxLineWidth,
+                        mWidth / 2f + minThermometerRadius + 2 * spaceScaleWidth + maxLineWidth,
                         mPaddingTop + titleHeight + minThermometerRadius + scaleSpaceHeight * i + baselineY / 2,
                         mTextPaint);
 
                 mLinePaint.setColor(maxScaleLineColor);
-                canvas.drawLine(mWidth / 2 + spaceScaleWidth + minThermometerRadius,
+                canvas.drawLine(mWidth / 2f + spaceScaleWidth + minThermometerRadius,
                         mPaddingTop + titleHeight + minThermometerRadius + scaleSpaceHeight * i,
-                        mWidth / 2 + spaceScaleWidth + minThermometerRadius + maxLineWidth,
+                        mWidth / 2f + spaceScaleWidth + minThermometerRadius + maxLineWidth,
                         mPaddingTop + titleHeight + minThermometerRadius + scaleSpaceHeight * i, mLinePaint);
             } else if (i % 5 == 0) {
                 mLinePaint.setColor(midScaleLineColor);
 
-                canvas.drawLine(mWidth / 2 + spaceScaleWidth + minThermometerRadius,
+                canvas.drawLine(mWidth / 2f + spaceScaleWidth + minThermometerRadius,
                         mPaddingTop + titleHeight + minThermometerRadius + scaleSpaceHeight * i,
-                        mWidth / 2 + spaceScaleWidth + minThermometerRadius + midLineWidth,
+                        mWidth / 2f + spaceScaleWidth + minThermometerRadius + midLineWidth,
                         mPaddingTop + titleHeight + minThermometerRadius + scaleSpaceHeight * i, mLinePaint);
             } else {
                 mLinePaint.setColor(minScaleLineColor);
 
-                canvas.drawLine(mWidth / 2 + spaceScaleWidth + minThermometerRadius,
+                canvas.drawLine(mWidth / 2f + spaceScaleWidth + minThermometerRadius,
                         mPaddingTop + titleHeight + minThermometerRadius + scaleSpaceHeight * i,
-                        mWidth / 2 + spaceScaleWidth + minThermometerRadius + minLineWidth,
+                        mWidth / 2f + spaceScaleWidth + minThermometerRadius + minLineWidth,
                         mPaddingTop + titleHeight + minThermometerRadius + scaleSpaceHeight * i, mLinePaint);
             }
         }
@@ -434,8 +435,12 @@ public class ThermometerView extends View {
      * @param curValue 当前温度值float(℃)
      */
     public void setCurValue(float curValue) {
+
+        initConfig();
         setResetCurValue(curValue);
         invalidate();
+
+        Logger.v("Thermometer", "setCurValue " + curValue);
     }
 
     /**
@@ -461,7 +466,7 @@ public class ThermometerView extends View {
         if (curValue > maxScaleValue) {
             curValue = maxScaleValue;
         }
-        this.curScaleValue = curValue;
+        this.curScaleValue = curValue;;
     }
 
     /**
@@ -480,6 +485,7 @@ public class ThermometerView extends View {
      * @param newValue 新温度值float(℃)
      */
     public void setValueAndStartAnim(float newValue) {
+
         if (newValue < minScaleValue) {
             newValue = minScaleValue;
         }
@@ -489,8 +495,8 @@ public class ThermometerView extends View {
 
         ObjectAnimator waveShiftAnim = ObjectAnimator.ofFloat(this, "curValue", curScaleValue, newValue);
         waveShiftAnim.setRepeatCount(0);
-        waveShiftAnim.setDuration(500);
-        waveShiftAnim.setInterpolator(new LinearInterpolator());
+        waveShiftAnim.setDuration(750);
+        waveShiftAnim.setInterpolator(new AccelerateDecelerateInterpolator());
         waveShiftAnim.start();
     }
 
@@ -513,7 +519,7 @@ public class ThermometerView extends View {
         private float midLineWidth = 50f; // 中等刻度长
         private float minLineWidth = 40f; // 短刻度长
         private float spaceScaleWidth = 30f; // 刻度离温度计距离、刻度离文字距离
-        private int thermometerBg = Color.WHITE; // 温度计颜色
+        private int thermometerBg = Color.MAGENTA; // 温度计颜色
         private int thermometerShadowBg = Color.parseColor("#F0F0F0"); // 温度计阴影颜色
         private float maxThermometerRadius = 80f; // 温度计底部半径
         private float minThermometerRadius = 40f; // // 温度计顶部半径

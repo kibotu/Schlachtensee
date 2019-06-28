@@ -30,4 +30,9 @@
         <attr name="curScaleValue" format="float" /> <!-- 当前刻度值 -->
     </declare-styleable>
 
+    <declare-styleable name="ParallaxScrollingView">
+        <attr name="speed" format="float" />
+        <attr name="src" format="reference" />
+    </declare-styleable>
+
 </resources>

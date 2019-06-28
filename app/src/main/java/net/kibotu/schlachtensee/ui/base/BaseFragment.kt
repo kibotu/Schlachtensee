@@ -208,7 +208,7 @@ abstract class BaseFragment : Fragment(), BackPress, DispatchTouchEventHandler,
 
     @CallSuper
     override fun onBackStackChanged() {
-        logv("[$uuid-Lifecycle-onBackStackChanged]")
+        logv{"[$uuid-Lifecycle-onBackStackChanged]"}
         updateMainLayout()
     }
 

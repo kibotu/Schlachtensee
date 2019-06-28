@@ -133,6 +133,7 @@ dependencies {
     debugImplementation libs.leakcanaryDebug
     debugImplementation libs.leakcanaryDebugSupportFragments
     releaseImplementation libs.leakcanaryRelease
+
     implementation libs.supportMultidex
 
     implementation libs.kotlinJdk8
@@ -149,6 +150,7 @@ dependencies {
     implementation libs.supportRecyclerview
     implementation libs.supportAnnotations
     implementation libs.supportVectorDrawable
+    implementation libs.androidKtxPalette
 
     // viewmodel and lifecycle
     implementation libs.lifecycleExtensions
@@ -163,7 +165,6 @@ dependencies {
     implementation libs.koinAndroidxScope
     implementation libs.koinAndroidxViewmodel
 
-    implementation libs.activityKtx
     implementation libs.androidKtxCollection
 
     implementation libs.androidKtxNavigationCommon
@@ -206,6 +207,8 @@ dependencies {
     implementation libs.processPhoenix
 
     implementation libs.catLoading
+
+    implementation libs.lottie
 
     implementation libs.glide
     kapt libs.glideAnnotationsProcessor

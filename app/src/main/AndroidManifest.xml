@@ -19,7 +19,9 @@
         android:windowSoftInputMode="stateHidden|adjustPan"
         tools:replace="android:allowBackup">
 
-        <activity android:name=".MainActivity">
+        <activity
+            android:name=".MainActivity"
+            android:screenOrientation="sensorPortrait">
 
             <nav-graph android:value="@navigation/navigation_controller" />
 
