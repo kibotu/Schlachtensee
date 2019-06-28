@@ -70,7 +70,7 @@
         app:lottie_loop="true"
         app:lottie_speed="0.2" />
 
-    <net.kibotu.schlachtensee.ui.temperature.ThermometerView
+    <net.kibotu.schlachtensee.ui.custom.ThermometerView
         android:id="@+id/thermometer"
         android:layout_width="0dp"
         android:layout_height="0dp"

@@ -25,6 +25,7 @@ import com.exozet.android.core.services.notifications.PushNotificationPublisher
 import io.reactivex.disposables.CompositeDisposable
 import net.kibotu.logger.Logger.loge
 import net.kibotu.logger.Logger.logv
+import net.kibotu.logger.snack
 import net.kibotu.schlachtensee.R
 import net.kibotu.schlachtensee.viewmodels.AppViewModel
 
@@ -186,6 +187,7 @@ abstract class BaseFragment : Fragment(), BackPress, DispatchTouchEventHandler,
 
     open fun onConnectivityUpdate(isConnected: Boolean) {
         logv("[$uuid-onConnectivityUpdate] isConnected=$isConnected")
+        snack("")
     }
 
     open fun onError(exception: Throwable) {

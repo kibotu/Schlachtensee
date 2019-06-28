@@ -3,9 +3,12 @@ package net.kibotu.schlachtensee.viewmodels
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.exozet.android.core.extensions.inject
+import com.exozet.android.core.extensions.stringFromAssets
 import kotlinx.coroutines.*
+import net.kibotu.logger.Logger
 import net.kibotu.schlachtensee.models.TemperatureHistory
 import net.kibotu.schlachtensee.services.network.RequestProvider
+import org.simpleframework.xml.core.Persister
 
 /**
  * Created by <a href="https://about.me/janrabe">Jan Rabe</a>.
@@ -35,15 +38,40 @@ class SchlachtenseeApiViewModel : ViewModel() {
 
     fun loadYearly() {
 
+        loadOfflineData()
+
         uiScope.launch {
 
-            val result = withContext(Dispatchers.IO) {
-                requestProvider.schlachtenseeApi.yearlyTemperature()
-            }
+            val result: TemperatureHistory? = withContext(Dispatchers.IO) {
+                try {
+                    requestProvider.schlachtenseeApi.yearlyTemperature()
+                } catch (e: Exception) {
+                    Logger.e(e)
+                    null
+                }
+            } ?: return@launch
 
             temperatures.value = result
         }
 
+    }
+
+    fun loadOfflineData() {
+
+        uiScope.launch {
+
+            val result: TemperatureHistory? = withContext(Dispatchers.IO) {
+                try {
+                    val xml = "estimated_temperatures.xml".stringFromAssets()
+                    Persister().read(TemperatureHistory::class.java, xml, true)
+                } catch (e: Exception) {
+                    Logger.e(e)
+                    null
+                }
+            } ?: return@launch
+
+            temperatures.value = result
+        }
     }
 
     init {

@@ -1,4 +1,4 @@
-package net.kibotu.schlachtensee.ui.temperature;
+package net.kibotu.schlachtensee.ui.custom;
 
 import android.animation.ObjectAnimator;
 import android.content.Context;
