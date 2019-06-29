@@ -1,3 +1,5 @@
+import java.security.spec.InvalidKeySpecException
+
 ext {
     VERSION_NAME = simpleReleaseVersionName()
     VERSION_CODE = commitCount()
@@ -7,6 +9,17 @@ ext {
     isLocal = project.rootProject.file('local.properties').exists()
     isTesting = false
     BUILD_TIME = new Date().getTime()
+
+    hasCredentials = project.rootProject.file('credentials.properties').exists()
+
+//    if (hasCredentials) {
+//        def Properties properties = new Properties()
+//        properties.load(project.rootProject.file("credentials.properties").newDataInputStream())
+//        DEBUG_STORE_PASSWORD = properties.getProperty(" debug.store.password", "")
+//        DEBUG_KEY_PASSWORD = properties.getProperty(" debug.key.password", "")
+//        RELEASE_STORE_PASSWORD = properties.getProperty(" release.store.password", "")
+//        RELEASE_KEY_PASSWORD = properties.getProperty(" release.key.password", "")
+//    }
 }
 
 apply plugin: 'com.android.application'
@@ -59,11 +72,46 @@ android {
         targetCompatibility JavaVersion.VERSION_1_8
     }
 
+
+    // region signing configs
+
+    if (hasCredentials) {
+
+        signingConfigs {
+            try {
+                debug {
+                    storeFile file(DEBUG_KEYSYORE_PATH)
+                    storePassword DEBUG_STORE_PASSWORD
+                    keyAlias DEBUG_KEYSTORE_ALLIAS
+                    keyPassword DEBUG_KEY_PASSWORD
+                }
+            }
+            catch (final ignored) {
+                throw new InvalidKeySpecException('You should define DEBUG_KEYSTORE_ALLIAS, DEBUG_STORE_PASSWORD, DEBUG_KEY_PASSWORD in gradle.properties.')
+            }
+            try {
+                release {
+                    storeFile file(RELEASE_KEYSYORE_PATH)
+                    storePassword RELEASE_STORE_PASSWORD
+                    keyAlias RELEASE_KEYSTORE_ALIAS
+                    keyPassword RELEASE_KEY_PASSWORD
+                }
+            } catch (final ignored) {
+                throw new InvalidKeySpecException('You should define RELEASE_KEYSTORE_ALIAS, RELEASE_STORE_PASSWORD, RELEASE_KEY_PASSWORD in gradle.properties.')
+            }
+        }
+    }
+
+    // endregion
+
     // region build types
 
     buildTypes {
 
         debug {
+            if (hasCredentials) {
+                signingConfig signingConfigs.debug
+            }
             applicationIdSuffix ""
             pseudoLocalesEnabled true
             debuggable true
@@ -76,13 +124,17 @@ android {
         }
 
         release {
+            if (hasCredentials) {
+                signingConfig signingConfigs.release
+            }
             pseudoLocalesEnabled false
             debuggable false
-            minifyEnabled true
+            minifyEnabled false
             crunchPngs true
-            shrinkResources true
+            shrinkResources false
             zipAlignEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            manifestPlaceholders += [crashlyticsEnabled: true]
         }
     }
 
@@ -191,7 +243,7 @@ dependencies {
     implementation libs.rx2Kotlin
     implementation libs.retrofit
     implementation libs.retrofitConverterGson
-    implementation libs.converterSimpleXml
+    implementation libs.converterSimpleXml // ) { exclude module: "simple-xml" }
     implementation libs.okhttp3
     implementation libs.okhttp3LoggingInterceptor
     implementation libs.okhttp3ResponseEcho
@@ -226,6 +278,8 @@ configurations.all {
     resolutionStrategy.force androidTestLibs.checkerQual
     resolutionStrategy.force androidTestLibs.errorProneAnnotations
     resolutionStrategy.force androidTestLibs.guavaListenablefuture
+
+    resolutionStrategy.force libs.kotlinJdk8
 }
 
 // endregion

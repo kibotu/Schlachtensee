@@ -212,3 +212,7 @@ $RECYCLE.BIN/
 *.lnk
 
 # End of https://www.gitignore.io/api/macos,windows,android,jetbrains+all
+
+
+credentials.properties
+certificates/**

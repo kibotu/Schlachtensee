@@ -79,6 +79,19 @@ class CurrentTemperatureFragment : BaseFragment() {
         wave1.start()
         wave2.start()
         wave3.start()
+
+        startFish()
+    }
+
+    private fun startFish() {
+        val tickerChannel = ticker(delayMillis = 10_000, initialDelayMillis = 10_000)
+
+        lifecycleScope.launch {
+            for (event in tickerChannel) {
+                fish.cancelAnimation()
+                fish.playAnimation()
+            }
+        }
     }
 
     private fun shakingFluid() {
