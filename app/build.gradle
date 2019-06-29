@@ -12,14 +12,14 @@ ext {
 
     hasCredentials = project.rootProject.file('credentials.properties').exists()
 
-//    if (hasCredentials) {
-//        def Properties properties = new Properties()
-//        properties.load(project.rootProject.file("credentials.properties").newDataInputStream())
-//        DEBUG_STORE_PASSWORD = properties.getProperty(" debug.store.password", "")
-//        DEBUG_KEY_PASSWORD = properties.getProperty(" debug.key.password", "")
-//        RELEASE_STORE_PASSWORD = properties.getProperty(" release.store.password", "")
-//        RELEASE_KEY_PASSWORD = properties.getProperty(" release.key.password", "")
-//    }
+    if (hasCredentials) {
+        def Properties properties = new Properties()
+        properties.load(project.rootProject.file("credentials.properties").newDataInputStream())
+        DEBUG_STORE_PASSWORD = properties.getProperty("debug.store.password", "")
+        DEBUG_KEY_PASSWORD = properties.getProperty("debug.key.password", "")
+        RELEASE_STORE_PASSWORD = properties.getProperty("release.store.password", "")
+        RELEASE_KEY_PASSWORD = properties.getProperty("release.key.password", "")
+    }
 }
 
 apply plugin: 'com.android.application'
