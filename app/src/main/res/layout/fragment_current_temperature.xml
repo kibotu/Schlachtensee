@@ -33,8 +33,9 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
+        app:lottie_autoPlay="false"
         app:lottie_fileName="fish.json"
-        app:lottie_loop="true"
+        app:lottie_loop="false"
         app:lottie_speed="-0.45" />
 
     <com.airbnb.lottie.LottieAnimationView
