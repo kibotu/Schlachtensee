@@ -29,5 +29,10 @@
         android:name="net.kibotu.schlachtensee.ui.temperature.CurrentTemperatureFragment"
         android:label="CurrentTemperatureFragment"
         tools:layout="@layout/fragment_current_temperature" />
+    <fragment
+        android:id="@+id/random"
+        android:name="net.kibotu.schlachtensee.ui.RandomScreen"
+        android:label="RandomScreen"
+        tools:layout="@layout/fragment_motion" />
 
 </navigation>

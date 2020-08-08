@@ -3,8 +3,8 @@ package net.kibotu.schlachtensee
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.multidex.MultiDexApplication
 import com.exozet.android.core.extensions.installServiceProviderIfNeeded
-import com.exozet.android.core.extensions.resBoolean
 import net.kibotu.logger.Logger
+import net.kibotu.resourceextension.resBoolean
 import net.kibotu.schlachtensee.extensions.initLogger
 import net.kibotu.schlachtensee.koin.*
 import org.koin.android.ext.koin.androidContext

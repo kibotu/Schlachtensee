@@ -11,7 +11,7 @@ buildscript {
 
     }
     dependencies {
-        classpath plugin.gradleBuildToolsCanary
+        classpath plugin.gradleBuildTools
         classpath plugin.navigationSafeArgs
         classpath plugin.kotlinGradle
         classpath plugin.kotlinApt
@@ -19,8 +19,6 @@ buildscript {
         classpath plugin.fabric
         classpath pluginLibrary.mavenGradle
         classpath plugin.dexcountGradle
-
-        classpath plugin.realm
     }
 }
 

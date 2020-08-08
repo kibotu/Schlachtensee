@@ -13,6 +13,8 @@ import net.kibotu.ContextHelper
 import net.kibotu.logger.BuildConfig
 import net.kibotu.logger.Logger.loge
 import net.kibotu.logger.Logger.logv
+import net.kibotu.logger.loge
+import net.kibotu.logger.logv
 import net.kibotu.logger.snack
 import net.kibotu.schlachtensee.R
 import java.util.concurrent.Executors
@@ -26,7 +28,7 @@ class AppViewModel : ViewModel() {
         networkChangeReceiver = NetworkChangeReceiver.register(ContextHelper.getApplication()!!) { isConnected ->
 
             if (!isConnected) {
-                snack(R.string.no_internet_connection_available.resString)
+                // snack(R.string.no_internet_connection_available.resString)
             }
 
             onConnectionUpdate.postValue(isConnected)

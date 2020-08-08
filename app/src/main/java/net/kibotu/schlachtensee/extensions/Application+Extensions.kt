@@ -13,7 +13,6 @@ import com.exozet.android.core.misc.DefaultUserAgent
 import com.google.firebase.FirebaseApp
 import com.google.firebase.messaging.FirebaseMessaging
 import com.jakewharton.processphoenix.ProcessPhoenix
-import com.squareup.leakcanary.LeakCanary
 import io.fabric.sdk.android.Fabric
 import net.kibotu.ContextHelper
 import net.kibotu.android.deviceinfo.library.buildinfo.BuildInfo
@@ -58,15 +57,8 @@ fun Application.initLogger() {
 }
 
 fun Application.initLeakCanary(): Boolean {
-    if (LeakCanary.isInAnalyzerProcess(this)) {
-        // This process is dedicated to LeakCanary for heap analysis.
-        // You should not init your app in this process.
-        return true
-    }
 
     initStrictMode()
-
-    LeakCanary.install(this)
 
     return false
 }
@@ -76,73 +68,6 @@ fun Application.initLeakCanary(): Boolean {
 enum class VSC(val commitUrl: String, val filesUrl: String) {
     Github("/commits", "/src"),
     Gitlab("/commits", "/tree")
-}
-
-fun VSC.createAppBuildInfo(): Map<String, Any> {
-    val info = LinkedHashMap<String, Any>()
-    @Suppress("DEPRECATION")
-    info["DEVICE_ID"] = Build.SERIAL
-    info["VERSION_NAME"] = "" + BuildConfig.VERSION_NAME
-    info["VERSION_CODE"] = "" + BuildConfig.VERSION_CODE
-    info["BUILD_TYPE"] = BuildConfig.BUILD_TYPE
-    info["FLAVOR"] = BuildConfig.FLAVOR
-    val d = Calendar.getInstance()
-    d.timeInMillis = java.lang.Long.parseLong(BuildConfig.BUILD_DATE)
-    info["BUILD_DATE"] = "" + d.time
-    info["BRANCH"] = BuildConfig.BRANCH
-    info["COMMIT_HASH"] = BuildConfig.COMMIT_HASH
-    info["COMMIT_URL"] = "${BuildConfig.VSC}$commitUrl/${BuildConfig.COMMIT_HASH}"
-    info["TREE_URL"] = "${BuildConfig.VSC}$filesUrl/${BuildConfig.COMMIT_HASH}"
-    info["IS_LOCAL"] = BuildConfig.IS_LOCAL
-    info["IS_CI"] = BuildConfig.IS_CI
-    info["Permissions"] = BuildInfo.getPermissions()
-    return info
-}
-
-fun createDeviceBuild(): Map<String, Any> {
-    val info = LinkedHashMap<String, Any>()
-    // http://developer.android.com/reference/android/os/Build.html
-    info["Model"] = Build.MODEL
-    info["Manufacturer"] = Build.MANUFACTURER
-    info["Release"] = Build.VERSION.RELEASE
-    info["SDK_INT"] = Build.VERSION.SDK_INT.toString()
-    info["Android Id"] = BuildInfo.getAndroidId()
-    info["TIME"] = Date(Build.TIME).toString()
-
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
-        info["SUPPORTED_ABIS"] = Arrays.toString(Build.SUPPORTED_ABIS)
-    else {
-        @Suppress("DEPRECATION")
-        info["CPU_ABI"] = Build.CPU_ABI
-        @Suppress("DEPRECATION")
-        info["CPU_ABI2"] = Build.CPU_ABI2
-    }
-
-    info["Board"] = Build.BOARD
-    info["Bootloader"] = Build.BOOTLOADER
-    info["Brand"] = Build.BRAND
-    info["Device"] = Build.DEVICE
-    info["Display"] = Build.DISPLAY
-    info["Fingerprint"] = Build.FINGERPRINT
-    info["Hardware"] = Build.HARDWARE
-    info["Host"] = Build.HOST
-    info["Id"] = Build.ID
-    info["Product"] = Build.PRODUCT
-    @Suppress("DEPRECATION")
-    info["Serial"] = Build.SERIAL
-    info["Tags"] = Build.TAGS
-    info["Type"] = Build.TYPE
-    info["User"] = Build.USER
-
-    // http://developer.android.com/reference/android/os/Build.VERSION.html
-    info["Codename"] = Build.VERSION.CODENAME
-    info["Incremental"] = Build.VERSION.INCREMENTAL
-    info["User Agent"] = DefaultUserAgent.getDefaultUserAgent(ContextHelper.getContext()!!)
-    info["HTTP Agent"] = System.getProperty("http.agent")!!
-    info["RTL"] = isRightToLeft()
-    info["isTablet"] = isTablet
-
-    return info
 }
 
 // endregion

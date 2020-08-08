@@ -13,6 +13,7 @@ import androidx.annotation.CallSuper
 import androidx.annotation.LayoutRes
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.transition.TransitionInflater
 import com.crashlytics.android.Crashlytics
@@ -25,6 +26,8 @@ import com.exozet.android.core.services.notifications.PushNotificationPublisher
 import io.reactivex.disposables.CompositeDisposable
 import net.kibotu.logger.Logger.loge
 import net.kibotu.logger.Logger.logv
+import net.kibotu.logger.loge
+import net.kibotu.logger.logv
 import net.kibotu.logger.snack
 import net.kibotu.schlachtensee.R
 import net.kibotu.schlachtensee.viewmodels.AppViewModel
@@ -69,7 +72,7 @@ abstract class BaseFragment : Fragment(), BackPress, DispatchTouchEventHandler,
             // on api 21, webview updates and hence it is not accessible during app usage, in this case we send the user to the play market and give him a hint in as push notification
             if (e.message?.contains("WebView") == true) {
                 PushNotificationPublisher.sendNotification(
-                    context!!,
+                    requireContext(),
                     "Outdated WebView",
                     "Please complete updating your WebView before continuing using ${R.string.app_name.resString}"
                 )
@@ -130,7 +133,7 @@ abstract class BaseFragment : Fragment(), BackPress, DispatchTouchEventHandler,
     @CallSuper
     open fun subscribeUi() {
         logv("[$uuid-Lifecycle-subscribeUi]")
-        appViewModel.onConnectionUpdate.observe(this, onConnectionUpdate)
+        appViewModel.onConnectionUpdate.observe(viewLifecycleOwner, onConnectionUpdate)
     }
 
     @CallSuper
@@ -187,7 +190,6 @@ abstract class BaseFragment : Fragment(), BackPress, DispatchTouchEventHandler,
 
     open fun onConnectivityUpdate(isConnected: Boolean) {
         logv("[$uuid-onConnectivityUpdate] isConnected=$isConnected")
-        snack("")
     }
 
     open fun onError(exception: Throwable) {

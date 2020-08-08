@@ -1,8 +1,8 @@
 package net.kibotu.schlachtensee.koin
 
-import com.exozet.android.core.extensions.resBoolean
 import com.exozet.android.core.extensions.resLong
 import com.exozet.android.core.services.network.interceptors.*
+import net.kibotu.resourceextension.resBoolean
 import net.kibotu.schlachtensee.R
 import net.kibotu.schlachtensee.services.network.RequestProvider
 import net.kibotu.schlachtensee.services.network.SchlachtenseeApi
@@ -34,7 +34,6 @@ private fun createOkHttpClient(
     .addInterceptor(createHttpLoggingInterceptor { R.bool.enable_logging.resBoolean })
     .addInterceptor(createOKLogInterceptor())
     .addInterceptor(loadingInterceptor)
-    .addCertificates(/*"certificate.pem"*/ dangerouslyTrustingAllHosts = R.bool.dangerously_trusting_all_hosts.resBoolean)
 
 private inline fun <reified T> createWebService(okHttpClient: OkHttpClient, url: String): T = Retrofit.Builder()
     .baseUrl(url)

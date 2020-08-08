@@ -1,11 +1,15 @@
 package net.kibotu.schlachtensee.ui.temperature
 
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
+import com.exozet.android.core.extensions.inject
 import com.exozet.android.core.extensions.onClick
+import com.exozet.android.core.extensions.viewModel
 import com.exozet.android.core.gson.toJson
 import kotlinx.android.synthetic.main.fragment_current_temperature.*
 import kotlinx.android.synthetic.main.waves.*
+import kotlinx.coroutines.ObsoleteCoroutinesApi
 import kotlinx.coroutines.channels.ticker
 import kotlinx.coroutines.launch
 import net.kibotu.logger.Logger.logv
@@ -83,6 +87,7 @@ class CurrentTemperatureFragment : BaseFragment() {
         startFish()
     }
 
+    @OptIn(ObsoleteCoroutinesApi::class)
     private fun startFish() {
         val tickerChannel = ticker(delayMillis = 10_000, initialDelayMillis = 10_000)
 
@@ -94,6 +99,7 @@ class CurrentTemperatureFragment : BaseFragment() {
         }
     }
 
+    @OptIn(ObsoleteCoroutinesApi::class)
     private fun shakingFluid() {
         val tickerChannel = ticker(delayMillis = 1_000, initialDelayMillis = 0)
 

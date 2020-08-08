@@ -4,6 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="net.kibotu.schlachtensee">
 
+    <uses-sdk tools:overrideLibrary="com.roger.catloadinglibrary"/>
+
     <application
         android:name=".App"
         android:allowBackup="false"

@@ -4,6 +4,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.MotionEvent
 import android.view.View
+import androidx.activity.viewModels
 import androidx.annotation.LayoutRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
@@ -55,7 +56,7 @@ class MainActivity : AppCompatActivity() {
         setTheme(R.style.AppTheme)
 
         newIntent = intent
-        logi("[onCreate] savedInstanceState=$savedInstanceState intent=$newIntent")
+        logi{"[onCreate] savedInstanceState=$savedInstanceState intent=$newIntent"}
 
         setContentView(layout)
 
@@ -71,7 +72,7 @@ class MainActivity : AppCompatActivity() {
         super.onResume()
 
         if (!checkGooglePlayServices()) {
-            logw("checkGooglePlayServices failed")
+            logw{"checkGooglePlayServices failed"}
         }
     }
 
@@ -82,7 +83,7 @@ class MainActivity : AppCompatActivity() {
     override fun onTouchEvent(event: MotionEvent?): Boolean {
 
         if (BuildConfig.DEBUG && BuildConfig.IS_LOCAL) {
-            logv("[onTouchEvent] currentFocus=${this@MainActivity.currentFocus} event=$event")
+            logv{"[onTouchEvent] currentFocus=${this@MainActivity.currentFocus} event=$event"}
         }
 
         return super.onTouchEvent(event)
@@ -123,7 +124,7 @@ class MainActivity : AppCompatActivity() {
     private fun addBackStackChangeListener() {
         navHost.childFragmentManager.addOnBackStackChangedListener {
             val fragment = currentFragment
-            logv("onBackStackChanged currentFragment=${fragment?.TAG}")
+            logv{"onBackStackChanged currentFragment=${fragment?.TAG}"}
             if (fragment is FragmentManager.OnBackStackChangedListener) {
                 fragment.onBackStackChanged()
             }
@@ -132,7 +133,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun addOnDestinationChangedListener() =
         navController.addOnDestinationChangedListener { _, destination, _ ->
-            logv("[onDestinationChange] id=${destination.id.resName} label=${destination.label}")
+            logv {"[onDestinationChange] id=${destination.id.resName} label=${destination.label}" }
         }
 
     // endregion
@@ -140,7 +141,7 @@ class MainActivity : AppCompatActivity() {
     // region loading spinner
 
     val onLoading = Observer<Boolean> { isLoading ->
-        logv("[OnLoading] isLoading=$isLoading")
+        logv {"[OnLoading] isLoading=$isLoading"}
 
         if (BuildConfig.DEBUG) {
             if (isLoading) {
@@ -191,7 +192,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
-        logv("[onNewIntent] $intent")
+        logv{"[onNewIntent] $intent"}
 
         newIntent = intent
 
@@ -200,7 +201,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun consumeIntent(): Boolean {
 
-        logv("[consumeIntent] ${newIntent?.extras?.string}")
+        logv { "[consumeIntent] ${newIntent?.extras?.string}"}
 
         val isConsumed: Boolean
 
