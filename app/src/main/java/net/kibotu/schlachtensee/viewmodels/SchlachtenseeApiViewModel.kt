@@ -1,5 +1,6 @@
 package net.kibotu.schlachtensee.viewmodels
 
+import android.util.Log
 import androidx.annotation.WorkerThread
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.liveData
@@ -42,6 +43,9 @@ class SchlachtenseeApiViewModel : ViewModel() {
 
         val offline = loadOfflineData()
         emit(offline)
+
+        // val t = requestProvider.schlachtenseeApi.lastTemperature()
+        // Log.v("Temperature", "t=${t.body()}")
 
         (loadDaily() ?: loadYearly())
             ?.let { emit(it) }

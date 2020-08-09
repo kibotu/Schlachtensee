@@ -276,6 +276,7 @@ dependencies {
     implementation libs.rx2Kotlin
     implementation libs.retrofit
     implementation libs.retrofitConverterGson
+    implementation libs.converterScalars
     implementation libs.converterSimpleXml // ) { exclude module: "simple-xml" }
     implementation libs.okhttp4
     implementation libs.okhttp3LoggingInterceptor

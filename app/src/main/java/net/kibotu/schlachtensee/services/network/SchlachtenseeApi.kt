@@ -1,6 +1,7 @@
 package net.kibotu.schlachtensee.services.network
 
 import net.kibotu.schlachtensee.models.yearly.TemperatureHistory
+import retrofit2.Response
 import retrofit2.http.GET
 
 /**
@@ -19,4 +20,7 @@ interface SchlachtenseeApi {
 
     @GET("/jmn_ajax.php?anfrage=7&art=temperaturjahr&offset=0")
     suspend fun yearlyTemperature(): TemperatureHistory
+
+    @GET("/jmn_ajax.php?anfrage=6")
+    suspend fun lastTemperature(): Response<String>
 }
