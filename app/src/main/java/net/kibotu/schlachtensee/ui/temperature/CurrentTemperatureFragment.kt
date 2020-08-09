@@ -5,7 +5,6 @@ import android.net.Uri
 import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import com.exozet.android.core.extensions.onClick
-import com.exozet.android.core.gson.toJson
 import kotlinx.android.synthetic.main.fragment_current_temperature.*
 import kotlinx.android.synthetic.main.waves.*
 import kotlinx.coroutines.ObsoleteCoroutinesApi
@@ -31,20 +30,19 @@ class CurrentTemperatureFragment : BaseFragment() {
 
     override val isFullScreen = true
 
-    val schlachtenseeApiViewModel by inject<SchlachtenseeApiViewModel>()
+    private val schlachtenseeApiViewModel by inject<SchlachtenseeApiViewModel>()
 
-    val random = Random()
+    private val random by lazy { Random() }
 
     override fun subscribeUi() {
         super.subscribeUi()
 
-
         schlachtenseeApiViewModel.temperatures.observe(this, Observer {
-            logv { "temperature ${it.toJson()}" }
+
+            logv { "$it" }
 
             thermometer.minScaleValue = it.minScaleValue
             thermometer.maxScaleValue = it.maxScaleValue
-            logv { "$it" }
 
             thermometer.setValueAndStartAnim(it.temperature)
         })

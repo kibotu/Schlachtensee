@@ -1,12 +1,12 @@
 package net.kibotu.schlachtensee.viewmodels
 
-import androidx.lifecycle.MutableLiveData
+import androidx.annotation.WorkerThread
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.liveData
 import com.exozet.android.core.extensions.inject
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.launch
 import net.kibotu.logger.Logger
 import net.kibotu.resourceextension.stringFromAssets
 import net.kibotu.schlachtensee.models.app.Temperature
@@ -21,6 +21,7 @@ import java.util.*
  */
 
 class SchlachtenseeApiViewModel : ViewModel() {
+
     /**
      * This is the job for all coroutines started by this ViewModel.
      * Cancelling this will cancel all coroutines started by this ViewModel.
@@ -35,71 +36,71 @@ class SchlachtenseeApiViewModel : ViewModel() {
 
     private val ioScope = CoroutineScope(Dispatchers.IO + viewModelJob)
 
+    private val requestProvider by inject<RequestProvider>()
+
+    val temperatures = liveData {
+
+        val offline = loadOfflineData()
+        emit(offline)
+
+        (loadDaily() ?: loadYearly())
+            ?.let { emit(it) }
+    }
+
     override fun onCleared() {
         super.onCleared()
         viewModelJob.cancel()
     }
 
-    val requestProvider by inject<RequestProvider>()
-
-    val temperatures = MutableLiveData<Temperature>()
-
-    fun loadYearly() {
-
-//        loadOfflineData()
-
-        ioScope.launch {
-
-            try {
-                val result =
-                    getTemperatureFrom(requestProvider.schlachtenseeApi.yearlyTemperature())
-                temperatures.postValue(result)
-            } catch (e: Exception) {
-                Logger.e(e)
-            }
-        }
+    @WorkerThread
+    private suspend fun loadDaily(): Temperature? = try {
+        requestProvider.schlachtenseeApi.dailyTemperature().toTemperature("daily")
+    } catch (e: Exception) {
+        Logger.e(e)
+        null
     }
 
-    private fun getTemperatureFrom(yearlyTemperature: TemperatureHistory): Temperature {
+    @WorkerThread
+    private suspend fun loadYearly(): Temperature? = try {
+        requestProvider.schlachtenseeApi.yearlyTemperature().toTemperature("yearly")
+    } catch (e: Exception) {
+        Logger.e(e)
+        null
+    }
+
+    @WorkerThread
+    private suspend fun loadOfflineData(): Temperature = Persister().read(
+        TemperatureHistory::class.java,
+        "estimated_temperatures.xml".stringFromAssets(),
+        true
+    ).toTemperature("offline")
+
+    companion object {
 
         /**
          * e.g.: 2019-05-11 00:59:59
          */
-        val format = "yyyy-MM-dd"
-        val formatter = SimpleDateFormat(format, Locale.GERMANY)
+        private const val format = "yyyy-MM-dd"
 
-        val now = formatter.format(Date())
+        private val dateFormatter by lazy { SimpleDateFormat(format, Locale.GERMANY) }
 
-        val temperature = yearlyTemperature.templist?.value?.firstOrNull {
-            it.date?.startsWith(now) ?: false
-        }?.wert?.toFloat()
+        private fun TemperatureHistory.toTemperature(source: String): Temperature {
 
-        val last = yearlyTemperature.templist?.value?.lastOrNull()?.wert?.toFloat() ?: 0f
+            val now = dateFormatter.format(Date())
 
-        val t = temperature ?: last
+            val temperature = templist?.value?.firstOrNull {
+                it.date?.startsWith(now) ?: false
+            }?.wert?.toFloat()
 
-        val temperatures = yearlyTemperature.templist?.value?.mapNotNull { it.wert?.toFloat() }
-        val min = temperatures?.min() ?: 0f
-        val max = temperatures?.max() ?: 0f
+            val last = templist?.value?.lastOrNull()?.wert?.toFloat() ?: 0f
 
-        return Temperature(min, max + 5, t)
-    }
+            val t = temperature ?: last
 
-    fun loadOfflineData() {
+            val temperatures = templist?.value?.mapNotNull { it.wert?.toFloat() }
+            val min = temperatures?.min() ?: 0f
+            val max = temperatures?.max() ?: 0f
 
-        ioScope.launch {
-
-            try {
-                val xml = "estimated_temperatures.xml".stringFromAssets()
-                val temperatureHistory = Persister().read(TemperatureHistory::class.java, xml, true)
-                temperatures.postValue(getTemperatureFrom(temperatureHistory))
-            } catch (e: Exception) {
-                Logger.e(e)
-            }
+            return Temperature(min, max + 5, t, source)
         }
-    }
-
-    init {
-        loadYearly()
     }
 }
