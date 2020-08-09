@@ -1,11 +1,10 @@
 package net.kibotu.schlachtensee.ui.temperature
 
-import androidx.fragment.app.viewModels
+import android.content.Intent
+import android.net.Uri
 import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
-import com.exozet.android.core.extensions.inject
 import com.exozet.android.core.extensions.onClick
-import com.exozet.android.core.extensions.viewModel
 import com.exozet.android.core.gson.toJson
 import kotlinx.android.synthetic.main.fragment_current_temperature.*
 import kotlinx.android.synthetic.main.waves.*
@@ -17,7 +16,6 @@ import net.kibotu.schlachtensee.R
 import net.kibotu.schlachtensee.ui.base.BaseFragment
 import net.kibotu.schlachtensee.viewmodels.SchlachtenseeApiViewModel
 import org.koin.android.ext.android.inject
-import java.text.SimpleDateFormat
 import java.util.*
 
 
@@ -40,32 +38,15 @@ class CurrentTemperatureFragment : BaseFragment() {
     override fun subscribeUi() {
         super.subscribeUi()
 
-        /**
-         * e.g.: 2019-05-11 00:59:59
-         */
-        val format = "yyyy-MM-dd"
-        val formatter = SimpleDateFormat(format, Locale.GERMANY)
 
         schlachtenseeApiViewModel.temperatures.observe(this, Observer {
             logv { "temperature ${it.toJson()}" }
 
-            val now = formatter.format(Date())
+            thermometer.minScaleValue = it.minScaleValue
+            thermometer.maxScaleValue = it.maxScaleValue
+            logv { "$it" }
 
-            val temperature = it.templist?.value?.firstOrNull { it.date?.startsWith(now) ?: false }?.wert?.toFloat()
-
-            val last = it.templist?.value?.lastOrNull()?.wert?.toFloat() ?: 0f
-
-            val t = temperature ?: last
-
-            val temperatures = it.templist?.value?.mapNotNull { it.wert?.toFloat() }
-            val min = temperatures?.min() ?: 0f
-            val max = temperatures?.max() ?: 0f
-
-            thermometer.minScaleValue = min
-            thermometer.maxScaleValue = max + 5
-            logv { "temperature=$temperature last=$last => $t min=$min max$max" }
-
-            thermometer.setValueAndStartAnim(t)
+            thermometer.setValueAndStartAnim(it.temperature)
         })
 
         thermometer.curScaleValue = 10f
@@ -85,6 +66,15 @@ class CurrentTemperatureFragment : BaseFragment() {
         wave3.start()
 
         startFish()
+
+        direction.onClick {
+            // @52.4659522,13.1487598,11z
+            // https://developers.google.com/maps/documentation/urls/android-intents#kotlin
+            val uri = Uri.parse("http://maps.google.com/maps?daddr=52.4659522,13.1487598")
+            val mapIntent = Intent(Intent.ACTION_VIEW, uri)
+            mapIntent.setPackage("com.google.android.apps.maps")
+            startActivity(mapIntent)
+        }
     }
 
     @OptIn(ObsoleteCoroutinesApi::class)

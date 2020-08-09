@@ -1,4 +1,4 @@
-package net.kibotu.schlachtensee.models
+package net.kibotu.schlachtensee.models.yearly
 
 import org.simpleframework.xml.Attribute
 import org.simpleframework.xml.Text

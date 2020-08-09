@@ -1,6 +1,6 @@
 package net.kibotu.schlachtensee.services.network
 
-import net.kibotu.schlachtensee.models.TemperatureHistory
+import net.kibotu.schlachtensee.models.yearly.TemperatureHistory
 import retrofit2.http.GET
 
 /**

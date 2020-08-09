@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
+    <bool name="debug_enable_cat_loader">false</bool>
+    <bool name="debug_unlock_screen">true</bool>
     <bool name="enable_debug_menu">true</bool>
     <bool name="enable_logging">true</bool>
     <bool name="enable_remote_config">true</bool>

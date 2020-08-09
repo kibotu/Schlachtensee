@@ -1,7 +1,7 @@
 package net.kibotu.schlachtensee.ui.splash
 
 import androidx.navigation.fragment.findNavController
-import com.exozet.android.core.extensions.resLong
+import net.kibotu.resourceextension.resLong
 import net.kibotu.schlachtensee.R
 import net.kibotu.schlachtensee.ui.base.BaseFragment
 
@@ -27,5 +27,6 @@ class SplashFragment : BaseFragment() {
         view?.removeCallbacks(navigate)
     }
 
-    private fun navigateToNextScreen() = findNavController().navigate(R.id.action_splash_to_current_temperature)
+    private fun navigateToNextScreen() =
+        findNavController().navigate(R.id.action_splash_to_current_temperature)
 }

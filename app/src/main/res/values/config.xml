@@ -3,8 +3,10 @@
 
     <!-- debug menu -->
 
+    <bool name="debug_enable_cat_loader">true</bool>
+    <bool name="debug_unlock_screen">false</bool>
     <bool name="enable_debug_menu">false</bool>
-    <bool name="enable_logging">false</bool>
+    <bool name="enable_logging">true</bool>
     <bool name="enableSecureScreen">true</bool>
     <bool name="flag_keep_screen_on">false</bool>
     <bool name="dangerously_trusting_all_hosts">false</bool>

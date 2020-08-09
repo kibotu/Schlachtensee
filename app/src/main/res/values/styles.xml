@@ -17,8 +17,7 @@
 
     <!-- splash screen -->
 
-    <style name="AppTheme.App.LaunchScreen" parent="AppTheme">
-    </style>
+    <style name="AppTheme.App.LaunchScreen" parent="AppTheme"></style>
 
     <!-- https://material.io/develop/android/components/bottom-navigation-view/ -->
 

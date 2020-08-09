@@ -3,13 +3,21 @@ package net.kibotu.schlachtensee.ui.custom;
 import android.animation.ObjectAnimator;
 import android.content.Context;
 import android.content.res.TypedArray;
-import android.graphics.*;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
+import android.graphics.PorterDuff;
+import android.graphics.PorterDuffXfermode;
+import android.graphics.RectF;
 import android.text.Layout;
 import android.text.TextPaint;
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.animation.AccelerateDecelerateInterpolator;
+
 import androidx.annotation.Nullable;
+
 import net.kibotu.logger.Logger;
 import net.kibotu.schlachtensee.R;
 
@@ -466,7 +474,8 @@ public class ThermometerView extends View {
         if (curValue > maxScaleValue) {
             curValue = maxScaleValue;
         }
-        this.curScaleValue = curValue;;
+        this.curScaleValue = curValue;
+        ;
     }
 
     /**

@@ -2,7 +2,6 @@ package net.kibotu.schlachtensee.viewmodels
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.exozet.android.core.extensions.resString
 import com.exozet.android.core.models.LoadingInfo
 import com.exozet.android.core.services.connectivity.NetworkChangeReceiver
 import io.reactivex.Observable
@@ -10,12 +9,11 @@ import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.addTo
 import io.reactivex.schedulers.Schedulers
 import net.kibotu.ContextHelper
-import net.kibotu.logger.BuildConfig
-import net.kibotu.logger.Logger.loge
-import net.kibotu.logger.Logger.logv
 import net.kibotu.logger.loge
 import net.kibotu.logger.logv
 import net.kibotu.logger.snack
+import net.kibotu.resourceextension.resString
+import net.kibotu.schlachtensee.BuildConfig
 import net.kibotu.schlachtensee.R
 import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
@@ -25,14 +23,15 @@ class AppViewModel : ViewModel() {
     var networkChangeReceiver: NetworkChangeReceiver
 
     init {
-        networkChangeReceiver = NetworkChangeReceiver.register(ContextHelper.getApplication()!!) { isConnected ->
+        networkChangeReceiver =
+            NetworkChangeReceiver.register(ContextHelper.getApplication()!!) { isConnected ->
 
-            if (!isConnected) {
-                // snack(R.string.no_internet_connection_available.resString)
+                if (!isConnected) {
+//                    snack(R.string.no_internet_connection_available.resString)
+                }
+
+                onConnectionUpdate.postValue(isConnected)
             }
-
-            onConnectionUpdate.postValue(isConnected)
-        }
     }
 
     var onConnectionUpdate = MutableLiveData<Boolean>()
@@ -77,9 +76,10 @@ class AppViewModel : ViewModel() {
 
         logv("[OnLoading] inProgress=${loadingInfos.count()} $loadingInfo")
 
-        if (BuildConfig.DEBUG) {
-            val match = loadingInfos.filter { it.name == loadingInfo.name && !loadingInfo.isLoading }
-                .sortedByDescending { it.time }.firstOrNull()
+        if (BuildConfig.IS_LOCAL) {
+            val match =
+                loadingInfos.filter { it.name == loadingInfo.name && !loadingInfo.isLoading }
+                    .maxBy { it.time }
 
             if (match != null) {
                 logv("Loading duration: ${loadingInfo.time - match.time} ms for ${loadingInfo.name}")
@@ -105,7 +105,8 @@ class AppViewModel : ViewModel() {
         isLoading.postValue(false)
     }
 
-    fun dumpLoadingInfos(): List<LoadingInfo> = loadingInfos.filter { it.isLoading }.map { it.copy() }.toList()
+    fun dumpLoadingInfos(): List<LoadingInfo> =
+        loadingInfos.filter { it.isLoading }.map { it.copy() }.toList()
 
     // endregion
 

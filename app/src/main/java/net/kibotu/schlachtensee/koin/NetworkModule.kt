@@ -1,8 +1,11 @@
 package net.kibotu.schlachtensee.koin
 
-import com.exozet.android.core.extensions.resLong
-import com.exozet.android.core.services.network.interceptors.*
+import com.exozet.android.core.services.network.interceptors.ContentTypeInterceptor
+import com.exozet.android.core.services.network.interceptors.LoadingInterceptor
+import com.exozet.android.core.services.network.interceptors.createHttpLoggingInterceptor
+import com.exozet.android.core.services.network.interceptors.createOKLogInterceptor
 import net.kibotu.resourceextension.resBoolean
+import net.kibotu.resourceextension.resLong
 import net.kibotu.schlachtensee.R
 import net.kibotu.schlachtensee.services.network.RequestProvider
 import net.kibotu.schlachtensee.services.network.SchlachtenseeApi
@@ -20,7 +23,12 @@ val remoteDataSourceModule = module {
     single { RequestProvider() }
     single { createOkHttpClient(get()).build() }
     single { LoadingInterceptor { get<AppViewModel>().onLoading(it) } }
-    single { createWebService<SchlachtenseeApi>(get(), get<AppConfiguration>().schlachtensee_base_url) }
+    single {
+        createWebService<SchlachtenseeApi>(
+            get(),
+            get<AppConfiguration>().schlachtensee_base_url
+        )
+    }
 }
 
 private fun createOkHttpClient(
@@ -35,10 +43,11 @@ private fun createOkHttpClient(
     .addInterceptor(createOKLogInterceptor())
     .addInterceptor(loadingInterceptor)
 
-private inline fun <reified T> createWebService(okHttpClient: OkHttpClient, url: String): T = Retrofit.Builder()
-    .baseUrl(url)
-    .client(okHttpClient)
-    .addConverterFactory(SimpleXmlConverterFactory.create())
-    .addConverterFactory(GsonConverterFactory.create())
-    .build()
-    .create(T::class.java)
+private inline fun <reified T> createWebService(okHttpClient: OkHttpClient, url: String): T =
+    Retrofit.Builder()
+        .baseUrl(url)
+        .client(okHttpClient)
+        .addConverterFactory(SimpleXmlConverterFactory.create())
+        .addConverterFactory(GsonConverterFactory.create())
+        .build()
+        .create(T::class.java)

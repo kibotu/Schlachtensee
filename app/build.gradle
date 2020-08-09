@@ -131,6 +131,10 @@ android {
             zipAlignEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             ext.alwaysUpdateBuildId = false
+
+            aaptOptions {
+                ignoreAssetsPattern "!.DS_Store"
+            }
         }
 
         release {
@@ -138,13 +142,17 @@ android {
                 signingConfig signingConfigs.release
             }
             pseudoLocalesEnabled false
-            debuggable false
-            minifyEnabled false
+            debuggable true
+            minifyEnabled true
             crunchPngs true
-            shrinkResources false
+            shrinkResources true
             zipAlignEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             manifestPlaceholders += [crashlyticsEnabled: true]
+
+            aaptOptions {
+                ignoreAssetsPattern "!StreamingLogger:!.DS_Store:!README.md:CHANGELOG.md:!Demo:!html"
+            }
         }
     }
 

@@ -1,10 +1,10 @@
 package net.kibotu.schlachtensee
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
 import android.view.MotionEvent
 import android.view.View
-import androidx.activity.viewModels
 import androidx.annotation.LayoutRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
@@ -15,13 +15,13 @@ import androidx.navigation.ui.NavigationUI
 import com.exozet.android.core.extensions.*
 import com.exozet.android.core.interfaces.BackPress
 import com.exozet.android.core.interfaces.DispatchTouchEventHandler
-import com.google.firebase.iid.FirebaseInstanceId
 import com.roger.catloadinglibrary.CatLoadingView
 import kotlinx.android.synthetic.main.activity_main.*
 import net.kibotu.logger.Logger.logi
 import net.kibotu.logger.Logger.logv
 import net.kibotu.logger.Logger.logw
 import net.kibotu.logger.TAG
+import net.kibotu.resourceextension.resBoolean
 import net.kibotu.schlachtensee.services.storage.LocalUser
 import net.kibotu.schlachtensee.ui.base.BaseFragment
 import net.kibotu.schlachtensee.viewmodels.AppViewModel
@@ -44,8 +44,9 @@ class MainActivity : AppCompatActivity() {
 
     var newIntent: Intent? = null
 
+    @SuppressLint("MissingPermission")
     override fun onCreate(savedInstanceState: Bundle?) {
-        if (BuildConfig.DEBUG) {
+        if (R.bool.debug_unlock_screen.resBoolean) {
             application.unlockScreen()
 
             if (!resources.getBoolean(R.bool.flag_keep_screen_on)) {
@@ -56,7 +57,7 @@ class MainActivity : AppCompatActivity() {
         setTheme(R.style.AppTheme)
 
         newIntent = intent
-        logi{"[onCreate] savedInstanceState=$savedInstanceState intent=$newIntent"}
+        logi { "[onCreate] savedInstanceState=$savedInstanceState intent=$newIntent" }
 
         setContentView(layout)
 
@@ -72,7 +73,7 @@ class MainActivity : AppCompatActivity() {
         super.onResume()
 
         if (!checkGooglePlayServices()) {
-            logw{"checkGooglePlayServices failed"}
+            logw { "checkGooglePlayServices failed" }
         }
     }
 
@@ -83,7 +84,7 @@ class MainActivity : AppCompatActivity() {
     override fun onTouchEvent(event: MotionEvent?): Boolean {
 
         if (BuildConfig.DEBUG && BuildConfig.IS_LOCAL) {
-            logv{"[onTouchEvent] currentFocus=${this@MainActivity.currentFocus} event=$event"}
+            logv { "[onTouchEvent] currentFocus=${this@MainActivity.currentFocus} event=$event" }
         }
 
         return super.onTouchEvent(event)
@@ -115,7 +116,8 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    override fun onSupportNavigateUp(): Boolean = navController.navigateUp() || super.onSupportNavigateUp()
+    override fun onSupportNavigateUp(): Boolean =
+        navController.navigateUp() || super.onSupportNavigateUp()
 
     // endregion
 
@@ -124,7 +126,7 @@ class MainActivity : AppCompatActivity() {
     private fun addBackStackChangeListener() {
         navHost.childFragmentManager.addOnBackStackChangedListener {
             val fragment = currentFragment
-            logv{"onBackStackChanged currentFragment=${fragment?.TAG}"}
+            logv { "onBackStackChanged currentFragment=${fragment?.TAG}" }
             if (fragment is FragmentManager.OnBackStackChangedListener) {
                 fragment.onBackStackChanged()
             }
@@ -133,7 +135,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun addOnDestinationChangedListener() =
         navController.addOnDestinationChangedListener { _, destination, _ ->
-            logv {"[onDestinationChange] id=${destination.id.resName} label=${destination.label}" }
+            logv { "[onDestinationChange] id=${destination.id.resName} label=${destination.label}" }
         }
 
     // endregion
@@ -141,9 +143,9 @@ class MainActivity : AppCompatActivity() {
     // region loading spinner
 
     val onLoading = Observer<Boolean> { isLoading ->
-        logv {"[OnLoading] isLoading=$isLoading"}
+        logv { "[OnLoading] isLoading=$isLoading" }
 
-        if (BuildConfig.DEBUG) {
+        if (R.bool.debug_enable_cat_loader.resBoolean) {
             if (isLoading) {
                 if (!loader.isShowing) {
                     loader?.dismiss()
@@ -192,7 +194,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
-        logv{"[onNewIntent] $intent"}
+        logv { "[onNewIntent] $intent" }
 
         newIntent = intent
 
@@ -201,7 +203,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun consumeIntent(): Boolean {
 
-        logv { "[consumeIntent] ${newIntent?.extras?.string}"}
+        logv { "[consumeIntent] ${newIntent?.extras?.string}" }
 
         val isConsumed: Boolean
 

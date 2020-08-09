@@ -4,43 +4,46 @@ package net.kibotu.schlachtensee.extensions
 
 import android.app.Application
 import android.content.res.Configuration
-import android.os.Build
 import com.crashlytics.android.Crashlytics
 import com.exozet.android.core.extensions.initStrictMode
 import com.exozet.android.core.extensions.inject
-import com.exozet.android.core.extensions.isRightToLeft
-import com.exozet.android.core.misc.DefaultUserAgent
 import com.google.firebase.FirebaseApp
 import com.google.firebase.messaging.FirebaseMessaging
 import com.jakewharton.processphoenix.ProcessPhoenix
 import io.fabric.sdk.android.Fabric
 import net.kibotu.ContextHelper
-import net.kibotu.android.deviceinfo.library.buildinfo.BuildInfo
-import net.kibotu.logger.*
+import net.kibotu.logger.LogcatLogger
+import net.kibotu.logger.Logger
+import net.kibotu.logger.WebLogger
 import net.kibotu.schlachtensee.BuildConfig
 import net.kibotu.schlachtensee.services.storage.AppConfiguration
 import net.kibotu.schlachtensee.services.storage.LocalUser
-import java.util.*
 
 fun Application.initCrashlytics() {
 
     val localUser by inject<LocalUser>()
 
-    if (!localUser.isTrackingAllowed && !BuildConfig.DEBUG)
+    if (!localUser.isTrackingAllowed && !BuildConfig.IS_LOCAL)
         return
 
     FirebaseApp.initializeApp(this)
     Fabric.with(this, Crashlytics())
 
     Crashlytics.setString("version", BuildConfig.CANONICAL_VERSION_NAME)
-    Crashlytics.setString("git-files", "${BuildConfig.VSC}${VSC.Github.filesUrl}/${BuildConfig.COMMIT_HASH}")
-    Crashlytics.setString("git-commit", "${BuildConfig.VSC}${VSC.Github.commitUrl}/${BuildConfig.COMMIT_HASH}")
+    Crashlytics.setString(
+        "git-files",
+        "${BuildConfig.VSC}${VSC.Github.filesUrl}/${BuildConfig.COMMIT_HASH}"
+    )
+    Crashlytics.setString(
+        "git-commit",
+        "${BuildConfig.VSC}${VSC.Github.commitUrl}/${BuildConfig.COMMIT_HASH}"
+    )
 }
 
 fun Application.subscribePushNotificationTopics() {
     FirebaseMessaging.getInstance().subscribeToTopic(packageName)
     FirebaseMessaging.getInstance().subscribeToTopic("$packageName.android")
-    if (BuildConfig.DEBUG)
+    if (BuildConfig.IS_LOCAL)
         FirebaseMessaging.getInstance().subscribeToTopic("$packageName.development")
 }
 

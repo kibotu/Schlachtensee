@@ -13,7 +13,6 @@ import androidx.annotation.CallSuper
 import androidx.annotation.LayoutRes
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
-import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.transition.TransitionInflater
 import com.crashlytics.android.Crashlytics
@@ -24,11 +23,11 @@ import com.exozet.android.core.interfaces.annotations.ScreenOrientation
 import com.exozet.android.core.misc.UIDGenerator
 import com.exozet.android.core.services.notifications.PushNotificationPublisher
 import io.reactivex.disposables.CompositeDisposable
-import net.kibotu.logger.Logger.loge
 import net.kibotu.logger.Logger.logv
 import net.kibotu.logger.loge
 import net.kibotu.logger.logv
-import net.kibotu.logger.snack
+import net.kibotu.resourceextension.resLong
+import net.kibotu.resourceextension.resString
 import net.kibotu.schlachtensee.R
 import net.kibotu.schlachtensee.viewmodels.AppViewModel
 
@@ -63,7 +62,11 @@ abstract class BaseFragment : Fragment(), BackPress, DispatchTouchEventHandler,
         logv("[$uuid-Lifecycle-onCreate]")
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
         logv("[$uuid-Lifecycle-onCreateView]")
         try {
             return inflater.inflate(layout, container, false)
@@ -98,14 +101,16 @@ abstract class BaseFragment : Fragment(), BackPress, DispatchTouchEventHandler,
     }
 
     protected fun handleTransition() {
-        sharedElementEnterTransition = TransitionInflater.from(context).inflateTransition(R.transition.move).apply {
-            duration = android.R.integer.config_shortAnimTime.resLong
-            startDelay = 0
-        }
-        sharedElementReturnTransition = TransitionInflater.from(context).inflateTransition(R.transition.move).apply {
-            duration = android.R.integer.config_shortAnimTime.resLong
-            startDelay = 0
-        }
+        sharedElementEnterTransition =
+            TransitionInflater.from(context).inflateTransition(R.transition.move).apply {
+                duration = android.R.integer.config_shortAnimTime.resLong
+                startDelay = 0
+            }
+        sharedElementReturnTransition =
+            TransitionInflater.from(context).inflateTransition(R.transition.move).apply {
+                duration = android.R.integer.config_shortAnimTime.resLong
+                startDelay = 0
+            }
         // postponeEnterTransition()
     }
 
@@ -212,7 +217,7 @@ abstract class BaseFragment : Fragment(), BackPress, DispatchTouchEventHandler,
 
     @CallSuper
     override fun onBackStackChanged() {
-        logv{"[$uuid-Lifecycle-onBackStackChanged]"}
+        logv { "[$uuid-Lifecycle-onBackStackChanged]" }
         updateMainLayout()
     }
 
