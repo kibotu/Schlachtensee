@@ -68,7 +68,7 @@ class CurrentTemperatureFragment : BaseFragment() {
         direction.onClick {
             // @52.4659522,13.1487598,11z
             // https://developers.google.com/maps/documentation/urls/android-intents#kotlin
-            val uri = Uri.parse("http://maps.google.com/maps?daddr=52.4659522,13.1487598")
+            val uri = Uri.parse("http://maps.google.com/maps?daddr=52.439978,13.2126509")
             val mapIntent = Intent(Intent.ACTION_VIEW, uri)
             mapIntent.setPackage("com.google.android.apps.maps")
             startActivity(mapIntent)
