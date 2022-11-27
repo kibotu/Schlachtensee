@@ -2,8 +2,6 @@ package net.kibotu.schlachtensee.koin
 
 import net.kibotu.resourceextension.resLong
 import net.kibotu.schlachtensee.R
-import net.kibotu.schlachtensee.services.LoadingInterceptor
-import net.kibotu.schlachtensee.services.network.RequestProvider
 import net.kibotu.schlachtensee.services.network.SchlachtenseeApi
 import okhttp3.OkHttpClient
 import org.koin.dsl.module
@@ -15,8 +13,7 @@ import java.util.concurrent.TimeUnit
 
 
 val remoteDataSourceModule = module {
-    single { RequestProvider() }
-    single { createOkHttpClient(get()).build() }
+    single { createOkHttpClient().build() }
     single {
         createWebService<SchlachtenseeApi>(
             get(),
@@ -25,14 +22,11 @@ val remoteDataSourceModule = module {
     }
 }
 
-private fun createOkHttpClient(
-    loadingInterceptor: LoadingInterceptor
-): OkHttpClient.Builder = OkHttpClient.Builder()
+private fun createOkHttpClient(): OkHttpClient.Builder = OkHttpClient.Builder()
     .retryOnConnectionFailure(true)
     .readTimeout(R.integer.timeoutDurationInSeconds.resLong, TimeUnit.SECONDS)
     .writeTimeout(R.integer.timeoutDurationInSeconds.resLong, TimeUnit.SECONDS)
     .connectTimeout(R.integer.timeoutDurationInSeconds.resLong, TimeUnit.SECONDS)
-    .addInterceptor(loadingInterceptor)
 
 private inline fun <reified T> createWebService(okHttpClient: OkHttpClient, url: String): T =
     Retrofit.Builder()

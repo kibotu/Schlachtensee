@@ -1,6 +1,7 @@
 package net.kibotu.schlachtensee
 
 import android.app.Application
+import com.google.android.material.color.DynamicColors
 import com.google.firebase.FirebaseApp
 import net.kibotu.resourceextension.resBoolean
 import net.kibotu.schlachtensee.extensions.initLogger
@@ -14,7 +15,6 @@ class App : Application() {
 
     override fun onCreate() {
         super.onCreate()
-
         FirebaseApp.initializeApp(this)
         initLogger()
         insertKoin()

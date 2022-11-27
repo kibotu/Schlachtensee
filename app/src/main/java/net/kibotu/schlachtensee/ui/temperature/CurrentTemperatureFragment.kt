@@ -6,6 +6,10 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.ViewGroup.MarginLayoutParams
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.updateLayoutParams
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.Dispatchers
@@ -15,6 +19,7 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import net.kibotu.logger.Logger
+import net.kibotu.resourceextension.dp
 import net.kibotu.schlachtensee.databinding.FragmentCurrentTemperatureBinding
 import net.kibotu.schlachtensee.extensions.setOnClickListenerThrottled
 import net.kibotu.schlachtensee.ui.base.ViewBindingFragment
@@ -37,14 +42,13 @@ class CurrentTemperatureFragment : ViewBindingFragment<FragmentCurrentTemperatur
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
         val binding = requireNotNull(binding)
 
-        viewLifecycleOwner.lifecycleScope.launch(Dispatchers.IO) {
+        viewLifecycleOwner.lifecycleScope.launch {
 
             viewModel.temperatures.collectLatest {
 
-                Logger.v("$it")
+                Logger.v("t=$it")
 
                 withContext(Dispatchers.Main) {
                     binding.thermometer.minScaleValue = it.minScaleValue
@@ -57,7 +61,13 @@ class CurrentTemperatureFragment : ViewBindingFragment<FragmentCurrentTemperatur
         binding.thermometer.curScaleValue = 10f
 
         binding.thermometer.setOnClickListenerThrottled {
-            //            thermometer.setValueAndStartAnim(random.nextFloat() * thermometer.maxScaleValue)
+            viewLifecycleOwner.lifecycleScope.launch {
+
+                val t = viewModel.currentTemperature() ?: return@launch
+                withContext(Dispatchers.Main) {
+                    binding.thermometer.setValueAndStartAnim(t)
+                }
+            }
         }
 
         binding.fluid.enableCalming = true
@@ -80,6 +90,33 @@ class CurrentTemperatureFragment : ViewBindingFragment<FragmentCurrentTemperatur
             mapIntent.setPackage("com.google.android.apps.maps")
             startActivity(mapIntent)
         }
+
+        ViewCompat.setOnApplyWindowInsetsListener(binding.root) { view, windowInsets ->
+            val insets = windowInsets.getInsets(WindowInsetsCompat.Type.navigationBars())
+
+            binding.direction.updateLayoutParams<MarginLayoutParams> {
+                bottomMargin = insets.bottom + 16.dp
+            }
+
+            binding.thermometer.updateLayoutParams<MarginLayoutParams> {
+                bottomMargin = insets.bottom + 16.dp
+            }
+
+            WindowInsetsCompat.CONSUMED
+        }
+
+        // https://developer.android.com/develop/ui/views/layout/edge-to-edge
+//        ViewCompat.setOnApplyWindowInsetsListener(binding.root) { view, windowInsets ->
+//            val insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemGestures())
+//            // Apply the insets as padding to the view. Here we're setting all of the
+//            // dimensions, but apply as appropriate to your layout. You could also
+//            // update the views margin if more appropriate.
+//            view.updatePadding(insets.left, insets.top, insets.right, insets.bottom)
+//
+//            // Return CONSUMED if we don't want the window insets to keep being passed
+//            // down to descendant views.
+//            WindowInsetsCompat.CONSUMED
+//        }
     }
 
     @OptIn(ObsoleteCoroutinesApi::class)

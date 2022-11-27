@@ -2,15 +2,15 @@ package net.kibotu.schlachtensee.viewmodels
 
 import androidx.annotation.WorkerThread
 import androidx.lifecycle.ViewModel
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.withContext
 import net.kibotu.logger.Logger
 import net.kibotu.resourceextension.stringFromAssets
 import net.kibotu.schlachtensee.models.app.Temperature
 import net.kibotu.schlachtensee.models.yearly.TemperatureHistory
-import net.kibotu.schlachtensee.services.network.RequestProvider
+import net.kibotu.schlachtensee.services.network.SchlachtenseeApi
 import org.koin.core.component.KoinApiExtension
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
@@ -25,42 +25,27 @@ import java.util.*
 @OptIn(KoinApiExtension::class)
 class SchlachtenseeApiViewModel : ViewModel(), KoinComponent {
 
-    /**
-     * This is the job for all coroutines started by this ViewModel.
-     * Cancelling this will cancel all coroutines started by this ViewModel.
-     */
-    private val viewModelJob = SupervisorJob()
-
-    /**
-     * This is the main scope for all coroutines launched by this ViewModel.
-     * Since we pass viewModelJob, you can cancel all coroutines launched by uiScope by calling viewModelJob.cancel()
-     */
-    private val uiScope = CoroutineScope(Dispatchers.Main + viewModelJob)
-
-    private val ioScope = CoroutineScope(Dispatchers.IO + viewModelJob)
-
-    private val requestProvider by inject<RequestProvider>()
+    private val api: SchlachtenseeApi by inject()
 
     val temperatures = flow {
 
         val offline = loadOfflineData()
         emit(offline)
 
-        // val t = requestProvider.schlachtenseeApi.lastTemperature()
-        // Log.v("Temperature", "t=${t.body()}")
+        val response = kotlin.runCatching { api.lastTemperature() }
+        Logger.v("Temperature", "t=${response}")
 
         (loadDaily() ?: loadYearly())
             ?.let { emit(it) }
-    }
+    }.flowOn(Dispatchers.IO)
 
-    override fun onCleared() {
-        super.onCleared()
-        viewModelJob.cancel()
+    suspend fun currentTemperature(): Float? = withContext(Dispatchers.IO) {
+        runCatching { api.lastTemperature().toFloat() }.getOrNull()
     }
 
     @WorkerThread
     private suspend fun loadDaily(): Temperature? = try {
-        requestProvider.schlachtenseeApi.dailyTemperature().toTemperature("daily")
+        api.dailyTemperature().toTemperature("daily")
     } catch (e: Exception) {
         Logger.e(e)
         null
@@ -68,7 +53,7 @@ class SchlachtenseeApiViewModel : ViewModel(), KoinComponent {
 
     @WorkerThread
     private suspend fun loadYearly(): Temperature? = try {
-        requestProvider.schlachtenseeApi.yearlyTemperature().toTemperature("yearly")
+        api.yearlyTemperature().toTemperature("yearly")
     } catch (e: Exception) {
         Logger.e(e)
         null

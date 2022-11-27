@@ -5,7 +5,9 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.annotation.CallSuper
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.WindowCompat
 import androidx.viewbinding.ViewBinding
+import net.kibotu.schlachtensee.R
 
 abstract class ViewBindingActivity<T : ViewBinding> : AppCompatActivity() {
 
@@ -23,7 +25,10 @@ abstract class ViewBindingActivity<T : ViewBinding> : AppCompatActivity() {
 
     @CallSuper
     override fun onCreate(savedInstanceState: Bundle?) {
+        setTheme(R.style.AppTheme)
+        WindowCompat.setDecorFitsSystemWindows(window, false)
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
     }
+
 }
