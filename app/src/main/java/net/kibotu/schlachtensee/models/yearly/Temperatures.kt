@@ -1,6 +1,5 @@
 package net.kibotu.schlachtensee.models.yearly
 
-import net.kibotu.schlachtensee.models.yearly.Temperature
 import org.simpleframework.xml.ElementList
 
 data class Temperatures(

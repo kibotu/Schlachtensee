@@ -1,43 +1,65 @@
+apply plugin: 'jacoco'
+
+ext {
+    RELEASE_APPLICATION_ID = "net.kibotu.schlachtensee"
+    RELEASE_VERSION_CODE = 10
+    RELEASE_VERSION_NAME = "2.0.0"
+    RELEASE_LOCAL_VERSION_NAME = "2.0.0"
+}
+
 buildscript {
 
-    apply from: "${project.rootDir}/Android-Dependencies/dependencies.gradle"
+    apply from: "${project.rootDir}/dependencies.gradle"
 
     repositories {
         google()
-        // https://storage-download.googleapis.com/maven-central/index.html
-        maven { url 'https://maven-central-eu.storage-download.googleapis.com/repos/central/data/' }
-        maven { url 'https://plugins.gradle.org/m2/' }
-        maven { url 'https://maven.fabric.io/public' }
-
+        mavenCentral()
+        maven { url 'https://jitpack.io' }
     }
+
     dependencies {
         classpath plugin.gradleBuildTools
-        classpath plugin.navigationSafeArgs
         classpath plugin.kotlinGradle
-        classpath plugin.kotlinApt
         classpath plugin.gms
-        classpath plugin.fabric
-        classpath pluginLibrary.mavenGradle
-        classpath plugin.dexcountGradle
+        classpath plugin.crashlytics
     }
 }
 
 allprojects {
-
-    apply from: "${project.rootDir}/Android-Dependencies/utils.gradle"
-
     repositories {
         google()
-        // https://storage-download.googleapis.com/maven-central/index.html
-        maven { url 'https://maven-central-eu.storage-download.googleapis.com/repos/central/data/' }
-        maven { url 'https://plugins.gradle.org/m2/' }
+        mavenCentral()
         maven { url 'https://jitpack.io' }
+    }
 
-        maven { url 'https://dl.bintray.com/exozetag/maven' } // todo remove once threesixty player is in jcenter
-        maven { url "https://oss.sonatype.org/content/repositories/snapshots" }
+    // Avoid Kotlin docs error
+    tasks.withType(Javadoc) {
+        enabled = false
+    }
+
+    configurations.all {
+
+        resolutionStrategy.force libs.appCompat
+        resolutionStrategy.force libs.appCompatResources
+        resolutionStrategy.force libs.androidKtxCore
+        resolutionStrategy.force libs.activityKtx
+        resolutionStrategy.force libs.fragmentKtx
+        resolutionStrategy.force libs.constraintlayout
+        resolutionStrategy.force libs.material
+        resolutionStrategy.force libs.annotation
+        resolutionStrategy.force libs.navigationKtx
+        resolutionStrategy.force libs.navigationUiKtx
+        resolutionStrategy.force libs.koinAndroidxScope
+        resolutionStrategy.force libs.koinAndroidxViewModel
+        resolutionStrategy.force libs.recyclerView
+        resolutionStrategy.force libs.activityKtx
     }
 }
 
 task clean(type: Delete) {
     delete rootProject.buildDir
 }
+
+// ./gradlew dependencyUpdates
+//apply from: "${project.rootDir}/check_dependency_updates.gradle"
+

@@ -1,38 +1,7 @@
-ext {
-    VERSION_NAME = simpleReleaseVersionName()
-    VERSION_CODE = commitCount()
-    CANONICAL_VERSION_NAME = canonicalReleaseVersionName()
-    BRANCH_NAME = branchName()
-    COMMIT_HASH = commitHash()
-    isLocal = project.rootProject.file('local.properties').exists()
-    isTesting = false
-    BUILD_TIME = new Date().getTime()
-
-    hasCredentials = project.rootProject.file('credentials.properties').exists()
-
-    if (hasCredentials) {
-        def Properties properties = new Properties()
-        properties.load(project.rootProject.file("credentials.properties").newDataInputStream())
-        DEBUG_STORE_PASSWORD = properties.getProperty("debug.store.password", "")
-        DEBUG_KEY_PASSWORD = properties.getProperty("debug.key.password", "")
-        RELEASE_STORE_PASSWORD = properties.getProperty("release.store.password", "")
-        RELEASE_KEY_PASSWORD = properties.getProperty("release.key.password", "")
-    }
-}
-
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
-apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-kapt'
-apply plugin: 'com.getkeepsafe.dexcount'
-
-androidExtensions {
-    experimental = true
-}
-
-kapt {
-    useBuildCache = true
-}
+apply plugin: 'kotlin-parcelize'
 
 android {
 
@@ -40,37 +9,24 @@ android {
     buildToolsVersion buildToolsVer
 
     defaultConfig {
-        applicationId APPLICATION_ID
+        applicationId RELEASE_APPLICATION_ID
+        namespace RELEASE_APPLICATION_ID
+        versionName RELEASE_VERSION_NAME
+        versionCode RELEASE_VERSION_CODE
         multiDexEnabled true
 
         minSdkVersion minSdkVer
         targetSdkVersion targetSdkVer
-        versionCode VERSION_CODE
-        versionName VERSION_NAME
         vectorDrawables.useSupportLibrary = true
 
-        buildConfigField "String", "CANONICAL_VERSION_NAME", escape(CANONICAL_VERSION_NAME)
-        buildConfigField "String", "COMMIT_HASH", escape(COMMIT_HASH)
-        buildConfigField "String", "BRANCH", escape(BRANCH_NAME)
-        buildConfigField "String", "BUILD_DATE", escape(BUILD_TIME)
-        buildConfigField "String", "VSC", escape(VSC_PATH)
-        buildConfigField "boolean", "IS_LOCAL", escape(isLocal)
-        buildConfigField "boolean", "IS_CI", escape(isCi)
-        buildConfigField "boolean", "TESTING", escape(isTesting)
-
         resConfigs "de"
-        manifestPlaceholders += [
-                crashlyticsEnabled: false
-        ]
     }
-
-
 
     // region compile options
 
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility JavaVersion.VERSION_11
+        targetCompatibility JavaVersion.VERSION_11
     }
 
     // endregion
@@ -78,39 +34,42 @@ android {
     // region compile options
 
     kotlinOptions {
-        jvmTarget = JavaVersion.VERSION_1_8
+        jvmTarget = JavaVersion.VERSION_11
     }
 
     // endregion
 
+    buildFeatures {
+        viewBinding true
+        buildConfig true
+    }
+
+
     // region signing configs
 
-    if (hasCredentials) {
-
-        signingConfigs {
-            try {
-                debug {
-                    storeFile file(DEBUG_KEYSYORE_PATH)
-                    storePassword DEBUG_STORE_PASSWORD
-                    keyAlias DEBUG_KEYSTORE_ALLIAS
-                    keyPassword DEBUG_KEY_PASSWORD
-                }
-            }
-            catch (final ignored) {
-                throw new java.security.spec.InvalidKeySpecException('You should define DEBUG_KEYSTORE_ALLIAS, DEBUG_STORE_PASSWORD, DEBUG_KEY_PASSWORD in gradle.properties.')
-            }
-            try {
-                release {
-                    storeFile file(RELEASE_KEYSYORE_PATH)
-                    storePassword RELEASE_STORE_PASSWORD
-                    keyAlias RELEASE_KEYSTORE_ALIAS
-                    keyPassword RELEASE_KEY_PASSWORD
-                }
-            } catch (final ignored) {
-                throw new java.security.spec.InvalidKeySpecException('You should define RELEASE_KEYSTORE_ALIAS, RELEASE_STORE_PASSWORD, RELEASE_KEY_PASSWORD in gradle.properties.')
-            }
-        }
-    }
+//    signingConfigs {
+//        try {
+//            debug {
+//                storeFile file(DEBUG_KEYSYORE_PATH)
+//                storePassword DEBUG_STORE_PASSWORD
+//                keyAlias DEBUG_KEYSTORE_ALLIAS
+//                keyPassword DEBUG_KEY_PASSWORD
+//            }
+//        }
+//        catch (final ignored) {
+//            //throw new java.security.spec.InvalidKeySpecException('You should define DEBUG_KEYSTORE_ALLIAS, DEBUG_STORE_PASSWORD, DEBUG_KEY_PASSWORD in gradle.properties.')
+//        }
+//        try {
+//            release {
+//                storeFile file(RELEASE_KEYSYORE_PATH)
+//                storePassword RELEASE_STORE_PASSWORD
+//                keyAlias RELEASE_KEYSTORE_ALIAS
+//                keyPassword RELEASE_KEY_PASSWORD
+//            }
+//        } catch (final ignored) {
+//            //throw new java.security.spec.InvalidKeySpecException('You should define RELEASE_KEYSTORE_ALIAS, RELEASE_STORE_PASSWORD, RELEASE_KEY_PASSWORD in gradle.properties.')
+//        }
+//    }
 
     // endregion
 
@@ -119,9 +78,7 @@ android {
     buildTypes {
 
         debug {
-            if (hasCredentials) {
-                signingConfig signingConfigs.debug
-            }
+//            signingConfig signingConfigs.debug
             applicationIdSuffix ""
             pseudoLocalesEnabled true
             debuggable true
@@ -138,9 +95,7 @@ android {
         }
 
         release {
-            if (hasCredentials) {
-                signingConfig signingConfigs.release
-            }
+//            signingConfig signingConfigs.release
             pseudoLocalesEnabled false
             debuggable false
             minifyEnabled true
@@ -187,162 +142,43 @@ android {
     }
 
     // endregion
-
-    // region dex options
-
-    dexOptions {
-        javaMaxHeapSize "4g"
-        maxProcessCount 8
-    }
-
-    // endregion
-
-    // region adb options
-
-    adbOptions {
-        timeOutInMs 10 * 60 * 1000 // 10 minutes
-    }
-
-    // endregion
-
-    // region exclude duplicated meta inf files
-
-    packagingOptions {
-        exclude 'META-INF/library-core_release.kotlin_module'
-        exclude 'META-INF/lib_release.kotlin_module'
-    }
-
-    // endregion
 }
 
 dependencies {
 
-//    debugImplementation libs.leakcanary2
-
-    implementation libs.supportMultidex
-
-    implementation libs.kotlinJdk8
-    implementation libs.kotlinxCoroutinesCore
-    implementation libs.kotlinxCoroutinesAndroid
-
-    implementation libs.supportAppCompat
+    implementation libs.appCompat
     implementation libs.appCompatResources
     implementation libs.androidKtxCore
-    implementation libs.activityKtx
-    implementation libs.fragmentKtx
+    implementation libs.constraintlayout
     implementation libs.material
-    implementation libs.constraintLayout2
-    implementation libs.supportRecyclerview
-    implementation libs.supportAnnotations
-    implementation libs.supportVectorDrawable
-    implementation libs.androidKtxPalette
-
-    // viewmodel and lifecycle
-    implementation libs.lifecycleExtensions
-    implementation libs.lifecycleViewmodel
-    implementation libs.lifecycleLivedata
-    kapt libs.lifecycleCompiler
-    implementation libs.lifecycleRuntime
-    implementation libs.lifecycleRuntimeKtx
-    implementation libs.lifecycleLivedataKtx
-    implementation libs.androidKtxLifecycleViewmodel
 
     implementation libs.koinAndroidxScope
-    implementation libs.koinAndroidxViewmodel
+    implementation libs.koinAndroidxViewModel
 
-    implementation libs.androidKtxCollection
-
-    implementation libs.androidKtxNavigationCommon
-    implementation libs.androidKtxNavigationFragment
-    implementation libs.androidKtxNavigationUi
-    implementation libs.androidKtxNavigationRuntime
-
-    implementation libs.playServicesAuth
-    implementation libs.firebaseCore
-    implementation libs.firebaseCrash
-    implementation(libs.crashlytics) { transitive = true }
+    implementation libs.resourceExtensions
+    implementation libs.applicationProvider
     implementation libs.firebaseMessaging
-    implementation libs.playServicesLocation
-    implementation libs.playServicesMaps
-    implementation libs.playServicesMapsUtils
-
-    // pagination
-    implementation libs.pagingRuntimeKtx
-
-    implementation libs.gson
-
-    implementation libs.rx2java
-    implementation libs.rx2Android
-    implementation libs.rx2Kotlin
-    implementation libs.retrofit
-    implementation libs.retrofitConverterGson
-    implementation libs.converterScalars
-    implementation libs.converterSimpleXml // ) { exclude module: "simple-xml" }
-    implementation libs.okhttp4
-    implementation libs.okhttp3LoggingInterceptor
-    implementation libs.okhttp3ResponseEcho
-
-    implementation libs.secureStorage
-    implementation libs.rxpermissions
-
-    implementation (libs.exozetCore) {
-        exclude group: 'io.realm'
-    }
 
     implementation libs.logger
-    implementation libs.deviceInfo
-    implementation libs.recyclerViewPresenter4
-    implementation libs.recyclerviewAnimators
-    implementation libs.processPhoenix
+    implementation libs.navigationKtx
+    implementation libs.navigationUiKtx
 
-    implementation libs.catLoading
+    implementation libs.retrofit
+    implementation libs.retrofitConverterGson
+    implementation libs.retrofitScalarConverter
+    implementation libs.okHttpLoggingInterceptor
+    implementation libs.oklog3
 
     implementation libs.lottie
-
-    implementation libs.glide
-    kapt libs.glideAnnotationsProcessor
+    implementation libs.retrofitXmlConverter
 }
 
 // region override support library version
 
 configurations.all {
 
-    resolutionStrategy.cacheDynamicVersionsFor 10, 'minutes'
-
-    // required for gradle uninstallAll
-    resolutionStrategy.force androidTestLibs.findBugs
-    resolutionStrategy.force androidTestLibs.checkerCompatQual
-    resolutionStrategy.force androidTestLibs.checkerQual
-    resolutionStrategy.force androidTestLibs.errorProneAnnotations
-    resolutionStrategy.force androidTestLibs.guavaListenablefuture
-
-    resolutionStrategy.force libs.material
-
-    resolutionStrategy.force libs.kotlinJdk8
 }
 
 // endregion
-
-static def escape(Object value) {
-    return "\"$value\""
-}
-
-static def escape(boolean value) {
-    return "$value"
-}
-
-task copyReadme(type: Copy) {
-    from "${project.rootDir}/README.md"
-    into "${project.rootDir}/app/src/main/assets"
-}
-
-task('generateChangelogTask') {
-    doLast {
-        generateChangelog()
-    }
-}
-
-preBuild.dependsOn generateChangelogTask
-preBuild.dependsOn copyReadme
 
 //apply plugin: 'com.google.gms.google-services'

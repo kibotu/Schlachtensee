@@ -1,8 +1,12 @@
 package net.kibotu.schlachtensee.services.network
 
-import com.exozet.android.core.extensions.inject
+import org.koin.core.component.KoinApiExtension
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.inject
 
-class RequestProvider {
+
+@OptIn(KoinApiExtension::class)
+class RequestProvider : KoinComponent {
 
     val schlachtenseeApi by inject<SchlachtenseeApi>()
 }

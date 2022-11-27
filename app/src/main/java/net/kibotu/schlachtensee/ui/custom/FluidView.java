@@ -1,5 +1,11 @@
 package net.kibotu.schlachtensee.ui.custom;
 
+import static android.os.Build.VERSION.SDK_INT;
+import static android.os.Build.VERSION_CODES.HONEYCOMB;
+import static android.os.Build.VERSION_CODES.JELLY_BEAN_MR2;
+import static androidx.core.content.ContextCompat.getColor;
+import static androidx.core.math.MathUtils.clamp;
+
 import android.animation.ArgbEvaluator;
 import android.content.Context;
 import android.graphics.Canvas;
@@ -13,15 +19,7 @@ import android.view.View;
 import android.view.animation.DecelerateInterpolator;
 import android.view.animation.Interpolator;
 
-import com.exozet.android.core.utils.MathExtensions;
-
 import net.kibotu.schlachtensee.R;
-
-import static android.os.Build.VERSION.SDK_INT;
-import static android.os.Build.VERSION_CODES.HONEYCOMB;
-import static android.os.Build.VERSION_CODES.JELLY_BEAN_MR2;
-import static androidx.core.content.ContextCompat.getColor;
-import static androidx.core.math.MathUtils.clamp;
 
 /**
  * Created by <a href="https://about.me/janrabe">Jan Rabe</a>.
@@ -151,8 +149,10 @@ public class FluidView extends View {
         }
     }
 
+    static public final float FLOAT_ROUNDING_ERROR = 0.000001f; // 32 bits
+
     public boolean isShacking() {
-        return mTargetIntensity >= MathExtensions.FLOAT_ROUNDING_ERROR || mShakeIntensity >= MathExtensions.FLOAT_ROUNDING_ERROR;
+        return mTargetIntensity >= FLOAT_ROUNDING_ERROR || mShakeIntensity >= FLOAT_ROUNDING_ERROR;
     }
 
     public Runnable onShakeEnded;
@@ -208,7 +208,7 @@ public class FluidView extends View {
 
     private abstract class Wave {
         private final Paint mPaint = new Paint();
-        private Path mPath = new Path();
+        private final Path mPath = new Path();
 
         private LinearGradient[] mGradients;
 

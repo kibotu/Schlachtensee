@@ -12,7 +12,7 @@
         android:layout_height="match_parent"
         android:background="@color/white_background_color">
 
-        <fragment
+        <androidx.fragment.app.FragmentContainerView
             android:id="@+id/navHost"
             android:name="androidx.navigation.fragment.NavHostFragment"
             android:layout_width="0dp"
@@ -49,7 +49,6 @@
             android:id="@+id/loaderView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@color/transparent_black_50"
             android:clickable="true"
             android:visibility="gone">
 

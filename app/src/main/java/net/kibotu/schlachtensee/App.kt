@@ -1,33 +1,23 @@
 package net.kibotu.schlachtensee
 
-import androidx.appcompat.app.AppCompatDelegate
-import androidx.multidex.MultiDexApplication
-import com.exozet.android.core.extensions.installServiceProviderIfNeeded
-import net.kibotu.logger.Logger
+import android.app.Application
+import com.google.firebase.FirebaseApp
 import net.kibotu.resourceextension.resBoolean
 import net.kibotu.schlachtensee.extensions.initLogger
-import net.kibotu.schlachtensee.koin.*
+import net.kibotu.schlachtensee.koin.remoteDataSourceModule
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.logger.AndroidLogger
 import org.koin.core.context.startKoin
 import org.koin.core.logger.EmptyLogger
 
-class App : MultiDexApplication() {
-
-    init {
-        AppCompatDelegate.setCompatVectorFromResourcesEnabled(true)
-    }
+class App : Application() {
 
     override fun onCreate() {
         super.onCreate()
 
-        insertKoin()
-
+        FirebaseApp.initializeApp(this)
         initLogger()
-
-//        initCrashlytics()
-//        subscribePushNotificationTopics()
-        installServiceProviderIfNeeded()
+        insertKoin()
     }
 
     private fun insertKoin() {
@@ -38,18 +28,8 @@ class App : MultiDexApplication() {
             }
             androidContext(this@App)
             modules(
-                configuration,
-                uiModule,
-                viewModelModule,
-                navigationModule,
                 remoteDataSourceModule
             )
         }
-    }
-
-    override fun onTerminate() {
-        @Suppress("DEPRECATION")
-        Logger.onTerminate()
-        super.onTerminate()
     }
 }

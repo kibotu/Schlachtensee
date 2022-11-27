@@ -8,6 +8,7 @@
 
     <include
         layout="@layout/waves"
+        android:id="@+id/wave_layout"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginBottom="200dp"
@@ -109,7 +110,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="8dp"
-        app:backgroundTint="@color/white"
+        app:backgroundTint="@android:color/white"
         app:fabSize="mini"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

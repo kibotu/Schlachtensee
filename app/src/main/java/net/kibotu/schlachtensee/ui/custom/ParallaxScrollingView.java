@@ -1,5 +1,7 @@
 package net.kibotu.schlachtensee.ui.custom;
 
+import static net.kibotu.resourceextension.ResourceExtensions.getPx;
+
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.res.TypedArray;
@@ -25,19 +27,17 @@ import net.kibotu.schlachtensee.R;
 
 import java.util.UUID;
 
-import static com.exozet.android.core.extensions.ResourceExtensions.getPx;
-
 /**
  * Created by <a href="https://about.me/janrabe">Jan Rabe</a>.
  */
 
 public class ParallaxScrollingView extends SurfaceView implements SurfaceHolder.Callback {
 
-    private UUID uuid = UUID.randomUUID();
+    private final UUID uuid = UUID.randomUUID();
 
     public boolean loggingEnabled = false;
 
-    private Rect clipBounds = new Rect();
+    private final Rect clipBounds = new Rect();
     private int maxBitmapHeight;
     private BitmapShader shader;
     private Paint paint;

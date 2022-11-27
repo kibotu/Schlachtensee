@@ -475,7 +475,6 @@ public class ThermometerView extends View {
             curValue = maxScaleValue;
         }
         this.curScaleValue = curValue;
-        ;
     }
 
     /**
@@ -514,7 +513,7 @@ public class ThermometerView extends View {
      */
     public static class ThermometerBuilder {
 
-        private Context context;
+        private final Context context;
         private int viewBg = Color.parseColor("#F5F5F5"); // 背景颜色
         private float unitTextSize = 36f; // 单位文字大小
         private int unitTextColor = Color.parseColor("#787878"); // 单位文字颜色

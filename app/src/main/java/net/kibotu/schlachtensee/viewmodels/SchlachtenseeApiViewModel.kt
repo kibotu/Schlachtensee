@@ -1,18 +1,19 @@
 package net.kibotu.schlachtensee.viewmodels
 
-import android.util.Log
 import androidx.annotation.WorkerThread
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.liveData
-import com.exozet.android.core.extensions.inject
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.flow.flow
 import net.kibotu.logger.Logger
 import net.kibotu.resourceextension.stringFromAssets
 import net.kibotu.schlachtensee.models.app.Temperature
 import net.kibotu.schlachtensee.models.yearly.TemperatureHistory
 import net.kibotu.schlachtensee.services.network.RequestProvider
+import org.koin.core.component.KoinApiExtension
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.inject
 import org.simpleframework.xml.core.Persister
 import java.text.SimpleDateFormat
 import java.util.*
@@ -21,7 +22,8 @@ import java.util.*
  * Created by <a href="https://about.me/janrabe">Jan Rabe</a>.
  */
 
-class SchlachtenseeApiViewModel : ViewModel() {
+@OptIn(KoinApiExtension::class)
+class SchlachtenseeApiViewModel : ViewModel(), KoinComponent {
 
     /**
      * This is the job for all coroutines started by this ViewModel.
@@ -39,7 +41,7 @@ class SchlachtenseeApiViewModel : ViewModel() {
 
     private val requestProvider by inject<RequestProvider>()
 
-    val temperatures = liveData {
+    val temperatures = flow {
 
         val offline = loadOfflineData()
         emit(offline)
