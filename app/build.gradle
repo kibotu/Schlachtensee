@@ -78,7 +78,7 @@ android {
     buildTypes {
 
         debug {
-            signingConfig signingConfigs.debug
+            if(hasCredentials) signingConfig signingConfigs.debug
             applicationIdSuffix ""
             pseudoLocalesEnabled true
             debuggable true
@@ -95,7 +95,7 @@ android {
         }
 
         release {
-            signingConfig signingConfigs.release
+            if(hasCredentials) signingConfig signingConfigs.release
             pseudoLocalesEnabled false
             debuggable false
             minifyEnabled true
