@@ -1,8 +1,6 @@
 language: android
-jdk: oraclejdk8
+jdk: oraclejdk11
 
-git:
-  depth: 10000
 
 env:
   global:
@@ -19,8 +17,8 @@ android:
 
     - platform-tools
     - tools
-    - build-tools-29.0.0-rc3
-    - android-29
+    - build-tools-33.0.1
+    - android-33
     - extra-google-m2repository
     - extra-android-m2repository
 
